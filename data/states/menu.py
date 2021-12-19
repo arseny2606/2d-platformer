@@ -7,26 +7,40 @@ from .. import constants
 
 class Menu:
     def __init__(self):
+        self.states = {"Story mode": "story",
+                       "Infinite mode": "infinite",
+                       "Options": "options",
+                       "Exit": "exit"}
         self.screen = setup.screen
         self.buttons = pg.sprite.Group()
         self.bg = utils.load_image("bg.jpg")
         self.bg = pg.transform.scale(self.bg, (constants.width, constants.height))
         rect = self.screen.get_rect()
-        rect.y -= 60
+        rect.y -= 90
         button.Button(self.buttons, "Story mode", rect)
         rect.y += 60
         button.Button(self.buttons, "Infinite mode", rect)
         rect.y += 60
         button.Button(self.buttons, "Options", rect)
+        rect.y += 60
+        button.Button(self.buttons, "Exit", rect)
         self.x = 0
         self.y = 0
 
-    def render(self):
+    def update(self, keys, clicks):
         self.screen.blit(self.bg, (0, 0))
         self.buttons.draw(self.screen)
-        self.buttons.update()
+        for i in self.buttons:
+            state = i.update(clicks)
+            if state:
+                return self.states[state]
+        return False
 
 
 class Options:
     def __init__(self):
         pass
+
+    def update(self, keys, clicks):
+        if keys[pg.K_ESCAPE]:
+            return "back"

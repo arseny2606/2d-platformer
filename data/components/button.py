@@ -14,9 +14,12 @@ class Button(pg.sprite.Sprite):
         self.rect.center = rect.center
         self.text = text
 
-    def update(self):
+    def update(self, clicks):
         if self.rect.collidepoint(pg.mouse.get_pos()):
             self.image = self.btn_hover_image
         else:
             self.image = self.btn_image
         utils.draw_text(self.text, 30, "white", self.screen, self.rect)
+        if self.rect.collidepoint(pg.mouse.get_pos()) and clicks[0]:
+            return self.text
+        return False
