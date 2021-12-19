@@ -1,8 +1,9 @@
 import pygame as pg
 from .. import setup
-from ..components import button
+from ..components import button, checkbox
 from .. import utils
 from .. import constants
+from ..settings import settings
 
 
 class Menu:
@@ -39,8 +40,20 @@ class Menu:
 
 class Options:
     def __init__(self):
-        pass
+        self.states = {"Show FPS": "show_fps"}
+        self.screen = setup.screen
+        self.buttons = pg.sprite.Group()
+        self.bg = utils.load_image("bg.jpg")
+        self.bg = pg.transform.scale(self.bg, (constants.width, constants.height))
+        rect = self.screen.get_rect()
+        checkbox.CheckBox(self.buttons, "Show FPS", rect)
 
     def update(self, keys, clicks):
+        self.screen.blit(self.bg, (0, 0))
+        self.buttons.draw(self.screen)
+        for i in self.buttons:
+            state = i.update(clicks)
+            if state:
+                settings[self.states[state[0]]] = state[1]
         if keys[pg.K_ESCAPE]:
             return "back"

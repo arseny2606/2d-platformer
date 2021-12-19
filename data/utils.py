@@ -3,7 +3,7 @@ import os
 
 
 def load_image(name):
-    fullname = os.path.join('resources', name)
+    fullname = os.path.join('resources/textures', name)
     image = pg.image.load(fullname)
     return image
 

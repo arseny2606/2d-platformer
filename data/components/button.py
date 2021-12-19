@@ -7,8 +7,8 @@ class Button(pg.sprite.Sprite):
     def __init__(self, group, text, rect):
         super().__init__(group)
         self.screen = setup.screen
-        self.btn_image = utils.load_image("button.png")
-        self.btn_hover_image = utils.load_image("button_hover.png")
+        self.btn_image = utils.load_image("button/button.png")
+        self.btn_hover_image = utils.load_image("button/button_hover.png")
         self.image = self.btn_image
         self.rect = self.image.get_rect()
         self.rect.center = rect.center

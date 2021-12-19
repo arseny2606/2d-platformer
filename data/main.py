@@ -3,6 +3,7 @@ import pygame
 from . import constants
 from . import setup
 from .states import menu
+from .settings import settings
 import pygame as pg
 
 
@@ -49,6 +50,12 @@ class Control:
             self.event_loop()
             self.update()
             self.clock.tick(self.fps)
+            if settings["show_fps"]:
+                fps = self.clock.get_fps()
+                with_fps = f"{constants.name} - {fps:.2f} FPS"
+                pg.display.set_caption(with_fps)
+            else:
+                pg.display.set_caption(constants.name)
 
 
 def main():
