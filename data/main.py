@@ -1,10 +1,9 @@
-import pygame
+import pygame as pg
 
 from . import constants
 from . import setup
-from .states import menu
 from .settings import settings
-import pygame as pg
+from .states import menu
 
 
 class Control:
@@ -18,6 +17,8 @@ class Control:
         self.states = states
         self.previous = None
         self.state = self.states["menu"]
+        self.font = pg.font.SysFont("Arial", 25)
+        self.fps_text = None
 
     def event_loop(self):
         for event in pg.event.get():
@@ -43,6 +44,8 @@ class Control:
         elif state:
             self.previous = self.state
             self.state = self.states[state]
+        if self.fps_text is not None:
+            self.screen.blit(self.fps_text, (10, 0))
         pg.display.update()
 
     def main(self):
@@ -52,10 +55,10 @@ class Control:
             self.clock.tick(self.fps)
             if settings["show_fps"]:
                 fps = self.clock.get_fps()
-                with_fps = f"{constants.name} - {fps:.2f} FPS"
-                pg.display.set_caption(with_fps)
+                self.fps_text = self.font.render(str(int(fps)), True, pg.Color("coral"))
             else:
                 pg.display.set_caption(constants.name)
+                self.fps_text = None
 
 
 def main():
