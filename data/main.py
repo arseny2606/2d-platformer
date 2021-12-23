@@ -4,6 +4,7 @@ from . import constants
 from . import setup
 from .settings import settings
 from .states import menu
+from .states.levels import level1
 
 
 class Control:
@@ -15,7 +16,7 @@ class Control:
         self.keys = pg.key.get_pressed()
         self.clicks = pg.mouse.get_pressed()
         self.states = states
-        self.previous = None
+        self.previous = []
         self.state = self.states["menu"]
         self.font = pg.font.SysFont("Arial", 25)
         self.fps_text = None
@@ -39,10 +40,10 @@ class Control:
         if state == "exit":
             self.running = False
         elif state == "back":
-            self.state = self.previous
-            self.previous = None
+            self.state = self.previous[-1]
+            del self.previous[-1]
         elif state:
-            self.previous = self.state
+            self.previous.append(self.state)
             self.state = self.states[state]
         if self.fps_text is not None:
             self.screen.blit(self.fps_text, (10, 0))
@@ -64,7 +65,8 @@ class Control:
 def main():
     states = {"menu": menu.Menu(),
               "options": menu.Options(),
-              "story": menu.Levels()}
+              "story": menu.Levels(),
+              "level1": level1.Level1()}
 
     control = Control(states)
     control.main()

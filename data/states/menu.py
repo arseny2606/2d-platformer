@@ -61,10 +61,8 @@ class Options:
 
 class Levels:
     def __init__(self):
-        self.states = {"Story mode": "story",
-                       "Infinite mode": "infinite",
-                       "Options": "options",
-                       "Exit": "exit"}
+        self.states = {"Level 1": "level1",
+                       "Level 2": "level2"}
         self.screen = setup.screen
         self.buttons = pg.sprite.Group()
         self.bg = utils.load_image("bg.jpg")
@@ -86,4 +84,3 @@ class Levels:
             state = i.update(clicks)
             if state:
                 return self.states[state]
-        return False
