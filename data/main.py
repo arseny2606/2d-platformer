@@ -63,7 +63,8 @@ class Control:
 
 def main():
     states = {"menu": menu.Menu(),
-              "options": menu.Options()}
+              "options": menu.Options(),
+              "story": menu.Levels()}
 
     control = Control(states)
     control.main()
