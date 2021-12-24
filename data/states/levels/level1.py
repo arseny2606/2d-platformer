@@ -4,6 +4,7 @@ from ... import utils
 from ... import constants
 from ...components.tile import Tile
 from ...components.player import Player
+from ...components.camera import Camera
 
 
 def generate_level(level, sprite_group, walls_group):
@@ -39,6 +40,7 @@ class Level1:
         self.walls_group = pg.sprite.Group()
         self.map = load_level("level1.txt")
         self.level = generate_level(self.map, self.all_sprites, self.walls_group)
+        self.camera = Camera()
         self.x = 0
         self.y = 0
 
@@ -46,5 +48,7 @@ class Level1:
         self.screen.blit(self.bg, (0, 0))
         self.level[0].move(keys)
         self.all_sprites.draw(self.screen)
+        self.camera.update(self.level[0])
+        self.camera.apply(self.level[0])
         if keys[pg.K_ESCAPE]:
             return "back"
