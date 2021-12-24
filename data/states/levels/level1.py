@@ -49,6 +49,7 @@ class Level1:
         self.level[0].move(keys)
         self.all_sprites.draw(self.screen)
         self.camera.update(self.level[0])
-        self.camera.apply(self.level[0])
+        for sprite in self.all_sprites:
+            self.camera.apply(sprite)
         if keys[pg.K_ESCAPE]:
             return "back"
