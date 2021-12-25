@@ -55,5 +55,4 @@ class Player(pg.sprite.Sprite):
                 self.speed_y = 0
             if self.jump_start and (pg.time.get_ticks() - self.jump_start) / 1000 >= 0.5:
                 self.speed_y = 3
-                self.speed_x = 0
                 self.jump_start = 0
