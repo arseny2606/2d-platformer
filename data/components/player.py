@@ -27,11 +27,11 @@ class Player(pg.sprite.Sprite):
                 self.speed_x += 1
                 if self.speed_x > 4:
                     self.speed_x = 4
-            elif keys[pg.K_LEFT]:
+            if keys[pg.K_LEFT]:
                 self.speed_x -= 1
                 if self.speed_x < -4:
                     self.speed_x = -4
-            elif keys[pg.K_UP]:
+            if keys[pg.K_UP]:
                 self.speed_y = -4
                 self.jump_start = pg.time.get_ticks()
         if not self.speed_x and not self.speed_y and self.get_collisions(self.walls_group):
@@ -45,8 +45,6 @@ class Player(pg.sprite.Sprite):
             else:
                 self.speed_y = -5
             self.rect = self.rect.move(self.speed_x, self.speed_y)
-            # self.speed_x = 0
-            # self.speed_y = 0
         else:
             self.rect = self.rect.move(self.speed_x, self.speed_y)
             if self.get_collisions(self.walls_group):
