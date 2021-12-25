@@ -22,17 +22,17 @@ class Player(pg.sprite.Sprite):
         return pg.sprite.spritecollideany(self, group)
 
     def move(self, keys):
-        if not self.speed_y:
+        if not self.speed_y and abs(self.speed_x) != 5:
             if keys[pg.K_RIGHT]:
                 self.speed_x += 1
-                if self.speed_x > 5:
-                    self.speed_x = 5
+                if self.speed_x > 4:
+                    self.speed_x = 4
             elif keys[pg.K_LEFT]:
                 self.speed_x -= 1
-                if self.speed_x < -5:
-                    self.speed_x = -5
+                if self.speed_x < -4:
+                    self.speed_x = -4
             elif keys[pg.K_UP]:
-                self.speed_y = -5
+                self.speed_y = -4
                 self.jump_start = pg.time.get_ticks()
         if not self.speed_x and not self.speed_y and self.get_collisions(self.walls_group):
             collision_sprite = self.get_collisions(self.walls_group)
@@ -45,14 +45,25 @@ class Player(pg.sprite.Sprite):
             else:
                 self.speed_y = -5
             self.rect = self.rect.move(self.speed_x, self.speed_y)
-            self.speed_x = 0
-            self.speed_y = 0
+            # self.speed_x = 0
+            # self.speed_y = 0
         else:
             self.rect = self.rect.move(self.speed_x, self.speed_y)
             if self.get_collisions(self.walls_group):
+                if self.speed_x > 0:
+                    self.speed_x = -5
+                elif self.speed_x < 0:
+                    self.speed_x = 5
+                if self.speed_y > 0:
+                    self.speed_y = -5
+                elif self.speed_y < 0:
+                    self.speed_y = 5
                 self.rect.move(-self.speed_x, -self.speed_y)
-                self.speed_x = 0
-                self.speed_y = 0
+            else:
+                if abs(self.speed_x) == 5:
+                    self.speed_x = 0
+                if abs(self.speed_y) == 5:
+                    self.speed_y = 0
             if self.jump_start and (pg.time.get_ticks() - self.jump_start) / 1000 >= 0.5:
                 self.speed_y = 3
                 self.jump_start = 0
