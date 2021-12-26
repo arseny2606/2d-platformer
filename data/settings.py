@@ -1,1 +1,1 @@
-settings = {"show_fps": False}
+settings = {"show_fps": False, "debug": True}

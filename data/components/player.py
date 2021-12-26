@@ -1,6 +1,7 @@
 import pygame as pg
 from .. import utils
 from .. import constants
+from ..settings import settings
 
 
 player_image = utils.load_image('mar.png')
@@ -22,7 +23,9 @@ class Player(pg.sprite.Sprite):
         return pg.sprite.spritecollideany(self, group)
 
     def move(self, keys):
-        if not self.speed_y and abs(self.speed_x) != 5:
+        if keys[pg.K_SPACE]:
+            settings["debug"] = not settings["debug"]
+        if (not self.speed_y or settings["debug"]) and abs(self.speed_x) != 5:
             if keys[pg.K_RIGHT]:
                 self.speed_x += 0.5
                 if self.speed_x > 4:
@@ -34,7 +37,10 @@ class Player(pg.sprite.Sprite):
             if keys[pg.K_UP]:
                 self.speed_y = -4
                 self.jump_start = pg.time.get_ticks()
-        if not self.speed_x and not self.speed_y and self.get_collisions(self.walls_group):
+        if settings["debug"]:
+            if keys[pg.K_DOWN]:
+                self.speed_y = 4
+        if not self.speed_x and not self.speed_y and self.get_collisions(self.walls_group) and not settings["debug"]:
             collision_sprite = self.get_collisions(self.walls_group)
             if collision_sprite.rect.x <= self.rect.x:
                 self.speed_x = 5
@@ -47,7 +53,7 @@ class Player(pg.sprite.Sprite):
             self.rect = self.rect.move(self.speed_x, self.speed_y)
         else:
             self.rect = self.rect.move(self.speed_x, self.speed_y)
-            if self.get_collisions(self.walls_group):
+            if self.get_collisions(self.walls_group) and not settings["debug"]:
                 if self.speed_x > 0:
                     self.speed_x = -5
                 elif self.speed_x < 0:
@@ -62,6 +68,6 @@ class Player(pg.sprite.Sprite):
                     self.speed_x = 0
                 if abs(self.speed_y) == 5:
                     self.speed_y = 0
-            if self.jump_start and (pg.time.get_ticks() - self.jump_start) / 1000 >= 0.5:
+            if self.jump_start and (pg.time.get_ticks() - self.jump_start) / 1000 >= 0.5 and not settings["debug"]:
                 self.speed_y = 3
                 self.jump_start = 0
