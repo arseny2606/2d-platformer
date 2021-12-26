@@ -4,6 +4,7 @@ from .. import constants
 
 tile_images = {
     'box': utils.load_image('box.png'),
+    'trapdoor': utils.load_image('trapdoor.png'),
     'empty': utils.load_image('grass.png')
 }
 

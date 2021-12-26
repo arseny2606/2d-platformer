@@ -13,6 +13,8 @@ def generate_level(level, sprite_group, walls_group):
         for x in range(len(level[y])):
             if level[y][x] == '#':
                 Tile('box', x, y, [sprite_group, walls_group])
+            elif level[y][x] == "!":
+                Tile('trapdoor', x, y, [sprite_group])
             elif level[y][x] == '@':
                 new_player = Player(x, y, [sprite_group], walls_group)
     # вернем игрока, а также размер поля в клетках
