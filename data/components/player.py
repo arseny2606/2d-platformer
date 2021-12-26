@@ -24,11 +24,11 @@ class Player(pg.sprite.Sprite):
     def move(self, keys):
         if not self.speed_y and abs(self.speed_x) != 5:
             if keys[pg.K_RIGHT]:
-                self.speed_x += 1
+                self.speed_x += 0.5
                 if self.speed_x > 4:
                     self.speed_x = 4
             if keys[pg.K_LEFT]:
-                self.speed_x -= 1
+                self.speed_x -= 0.5
                 if self.speed_x < -4:
                     self.speed_x = -4
             if keys[pg.K_UP]:
