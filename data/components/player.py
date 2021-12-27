@@ -21,10 +21,12 @@ class Player(pg.sprite.Sprite):
         self.jumped = False
         self.direction = 0
         self.in_air = True
+        self.dx = 0
+        self.dy = 0
 
     def move(self, keys):
-        dx = 0
-        dy = 0
+        # dx = 0
+        self.dy = 0
         if keys[pg.K_SPACE]:
             settings["debug"] = not settings["debug"]
         if keys[pg.K_UP] and (not self.jumped and not self.in_air or settings["debug"]):
@@ -33,30 +35,34 @@ class Player(pg.sprite.Sprite):
         if not keys[pg.K_UP]:
             self.jumped = False
         if keys[pg.K_LEFT]:
-            dx -= 5
+            self.dx -= 0.5
+            if self.dx < -5:
+                self.dx = -5
             self.direction = -1
         if keys[pg.K_RIGHT]:
-            dx += 5
+            self.dx += 0.5
+            if self.dx > 5:
+                self.dx = 5
             self.direction = 1
 
         self.vel_y += 0.5
         if self.vel_y > 5:
             self.vel_y = 5
-        dy += self.vel_y
+        self.dy += self.vel_y
 
         self.in_air = True
         for tile in self.walls_group:
             tile = tile.rect
-            if tile.colliderect(self.rect.x + dx, self.rect.y, self.width, self.height) and not settings["debug"]:
-                dx = 0
-            if tile.colliderect(self.rect.x, self.rect.y + dy, self.width, self.height) and not settings["debug"]:
+            if tile.colliderect(self.rect.x + self.dx, self.rect.y, self.width, self.height) and not settings["debug"]:
+                self.dx = 0
+            if tile.colliderect(self.rect.x, self.rect.y + self.dy, self.width, self.height) and not settings["debug"]:
                 if self.vel_y < 0:
-                    dy = tile.bottom - self.rect.top
+                    self.dy = tile.bottom - self.rect.top
                     self.vel_y = 0
                 elif self.vel_y >= 0:
-                    dy = tile.top - self.rect.bottom
+                    self.dy = tile.top - self.rect.bottom
                     self.vel_y = 0
                     self.in_air = False
 
-        self.rect.x += dx
-        self.rect.y += dy
+        self.rect.x += self.dx
+        self.rect.y += self.dy
