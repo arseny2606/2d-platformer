@@ -23,11 +23,14 @@ class Player(pg.sprite.Sprite):
         self.in_air = True
         self.dx = 0
         self.dy = 0
+        self.old_time = 0.0
+        self.time = pg.time.get_ticks()
 
     def move(self, keys):
         # dx = 0
+        self.time = pg.time.get_ticks()
         self.dy = 0
-        if keys[pg.K_SPACE]:
+        if keys[pg.K_SPACE] and self.old_time + 60 < self.time:
             settings["debug"] = not settings["debug"]
         if keys[pg.K_UP] and (not self.jumped and not self.in_air or settings["debug"]):
             self.vel_y = -10
@@ -36,12 +39,12 @@ class Player(pg.sprite.Sprite):
             self.jumped = False
         if keys[pg.K_LEFT]:
             self.dx -= 0.5
-            if self.dx < -5:
+            if self.dx < -5 and not settings["debug"]:
                 self.dx = -5
             self.direction = -1
         if keys[pg.K_RIGHT]:
             self.dx += 0.5
-            if self.dx > 5:
+            if self.dx > 5 and not settings["debug"]:
                 self.dx = 5
             self.direction = 1
 
