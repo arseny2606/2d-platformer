@@ -25,8 +25,9 @@ class Player(pg.sprite.Sprite):
     def move(self, keys):
         dx = 0
         dy = 0
-
-        if keys[pg.K_UP] and not self.jumped and not self.in_air:
+        if keys[pg.K_SPACE]:
+            settings["debug"] = not settings["debug"]
+        if keys[pg.K_UP] and (not self.jumped and not self.in_air or settings["debug"]):
             self.vel_y = -10
             self.jumped = True
         if not keys[pg.K_UP]:
@@ -46,9 +47,9 @@ class Player(pg.sprite.Sprite):
         self.in_air = True
         for tile in self.walls_group:
             tile = tile.rect
-            if tile.colliderect(self.rect.x + dx, self.rect.y, self.width, self.height):
+            if tile.colliderect(self.rect.x + dx, self.rect.y, self.width, self.height) and not settings["debug"]:
                 dx = 0
-            if tile.colliderect(self.rect.x, self.rect.y + dy, self.width, self.height):
+            if tile.colliderect(self.rect.x, self.rect.y + dy, self.width, self.height) and not settings["debug"]:
                 if self.vel_y < 0:
                     dy = tile.bottom - self.rect.top
                     self.vel_y = 0
