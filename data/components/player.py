@@ -3,7 +3,6 @@ from .. import utils
 from .. import constants
 from ..settings import settings
 
-
 player_image = utils.load_image('mar.png')
 
 
@@ -13,61 +12,50 @@ class Player(pg.sprite.Sprite):
         for i in sprite_groups:
             i.add(self)
         self.image = player_image
-        self.rect = self.image.get_rect().move(constants.tile_width * pos_x + 15, constants.tile_height * pos_y + 5 + constants.height / 2)
+        self.rect = self.image.get_rect().move(constants.tile_width * pos_x + 15,
+                                               constants.tile_height * pos_y + 5 + constants.height / 2)
         self.walls_group = walls_group
-        self.speed_x = 0
-        self.speed_y = 0
-        self.jump_start = 0
-
-    def get_collisions(self, group):
-        return pg.sprite.spritecollideany(self, group)
+        self.width = self.image.get_width()
+        self.height = self.image.get_height()
+        self.vel_y = 0
+        self.jumped = False
+        self.direction = 0
+        self.in_air = True
 
     def move(self, keys):
-        if keys[pg.K_SPACE]:
-            settings["debug"] = not settings["debug"]
-        if (not self.speed_y or settings["debug"]) and abs(self.speed_x) != 5:
-            if keys[pg.K_RIGHT]:
-                self.speed_x += 0.5
-                if self.speed_x > 4:
-                    self.speed_x = 4
-            if keys[pg.K_LEFT]:
-                self.speed_x -= 0.5
-                if self.speed_x < -4:
-                    self.speed_x = -4
-            if keys[pg.K_UP]:
-                self.speed_y = -4
-                self.jump_start = pg.time.get_ticks()
-        if settings["debug"]:
-            if keys[pg.K_DOWN]:
-                self.speed_y = 4
-        if not self.speed_x and not self.speed_y and self.get_collisions(self.walls_group) and not settings["debug"]:
-            collision_sprite = self.get_collisions(self.walls_group)
-            if collision_sprite.rect.x <= self.rect.x:
-                self.speed_x = 5
-            else:
-                self.speed_x = -5
-            if collision_sprite.rect.y <= self.rect.y:
-                self.speed_y = 5
-            else:
-                self.speed_y = -5
-            self.rect = self.rect.move(self.speed_x, self.speed_y)
-        else:
-            self.rect = self.rect.move(self.speed_x, self.speed_y)
-            if self.get_collisions(self.walls_group) and not settings["debug"]:
-                if self.speed_x > 0:
-                    self.speed_x = -5
-                elif self.speed_x < 0:
-                    self.speed_x = 5
-                if self.speed_y > 0:
-                    self.speed_y = -5
-                elif self.speed_y < 0:
-                    self.speed_y = 5
-                self.rect.move(-self.speed_x, -self.speed_y)
-            else:
-                if abs(self.speed_x) == 5:
-                    self.speed_x = 0
-                if abs(self.speed_y) == 5:
-                    self.speed_y = 0
-            if self.jump_start and (pg.time.get_ticks() - self.jump_start) / 1000 >= 0.5 and not settings["debug"]:
-                self.speed_y = 3
-                self.jump_start = 0
+        dx = 0
+        dy = 0
+
+        if keys[pg.K_UP] and not self.jumped and not self.in_air:
+            self.vel_y = -20
+            self.jumped = True
+        if not keys[pg.K_UP]:
+            self.jumped = False
+        if keys[pg.K_LEFT]:
+            dx -= 5
+            self.direction = -1
+        if keys[pg.K_RIGHT]:
+            dx += 5
+            self.direction = 1
+
+        self.vel_y += 1
+        if self.vel_y > 10:
+            self.vel_y = 10
+        dy += self.vel_y
+
+        self.in_air = True
+        for tile in self.walls_group:
+            tile = tile.rect
+            if tile.colliderect(self.rect.x + dx, self.rect.y, self.width, self.height):
+                dx = 0
+            if tile.colliderect(self.rect.x, self.rect.y + dy, self.width, self.height):
+                if self.vel_y < 0:
+                    dy = tile.bottom - self.rect.top
+                    self.vel_y = 0
+                elif self.vel_y >= 0:
+                    dy = tile.top - self.rect.bottom
+                    self.vel_y = 0
+                    self.in_air = False
+
+        self.rect.x += dx
+        self.rect.y += dy
