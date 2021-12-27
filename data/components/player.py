@@ -27,7 +27,7 @@ class Player(pg.sprite.Sprite):
         dy = 0
 
         if keys[pg.K_UP] and not self.jumped and not self.in_air:
-            self.vel_y = -20
+            self.vel_y = -10
             self.jumped = True
         if not keys[pg.K_UP]:
             self.jumped = False
@@ -38,9 +38,9 @@ class Player(pg.sprite.Sprite):
             dx += 5
             self.direction = 1
 
-        self.vel_y += 1
-        if self.vel_y > 10:
-            self.vel_y = 10
+        self.vel_y += 0.5
+        if self.vel_y > 5:
+            self.vel_y = 5
         dy += self.vel_y
 
         self.in_air = True
