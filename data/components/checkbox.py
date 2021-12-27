@@ -34,7 +34,7 @@ class CheckBox(pg.sprite.Sprite):
             else:
                 self.image = self.chk_image
         utils.draw_text(self.text, 30, "white", self.screen, self.center)
-        if self.rect.collidepoint(pg.mouse.get_pos()) and clicks[0] and self.old_time + 60 < self.time:
+        if self.rect.collidepoint(pg.mouse.get_pos()) and clicks[0] and self.old_time + 120 < self.time:
             self.old_time = self.time
             self.checked = not self.checked
             return self.text, self.checked
