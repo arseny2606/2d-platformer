@@ -5,6 +5,7 @@ from . import setup
 from .settings import settings
 from .states import menu
 from .states.levels import level1
+from .states.levels import level2
 
 
 class Control:
@@ -66,7 +67,8 @@ def main():
     states = {"menu": menu.Menu(),
               "options": menu.Options(),
               "story": menu.Levels(),
-              "level1": level1.Level1()}
+              "level1": level1.Level1(),
+              "level2": level2.Level2()}
 
     control = Control(states)
     control.main()
