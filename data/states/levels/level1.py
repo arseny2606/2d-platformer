@@ -2,12 +2,13 @@ import pygame as pg
 from ... import setup
 from ... import utils
 from ... import constants
+from ...components.coin import Coin
 from ...components.tile import Tile
 from ...components.player import Player
 from ...components.camera import Camera
 
 
-def generate_level(level, sprite_group, walls_group):
+def generate_level(level, sprite_group, walls_group, coins_group):
     new_player, x, y = None, None, None
     for y in range(len(level)):
         for x in range(len(level[y])):
@@ -15,8 +16,10 @@ def generate_level(level, sprite_group, walls_group):
                 Tile('box', x, y, [sprite_group, walls_group])
             elif level[y][x] == "!":
                 Tile('trapdoor', x, y, [sprite_group])
+            elif level[y][x] == '%':
+                Coin([sprite_group, coins_group], utils.load_image("coin.png"), 9, 1, x, y)
             elif level[y][x] == '@':
-                new_player = Player(x, y, [sprite_group], walls_group)
+                new_player = Player(x, y, [sprite_group], walls_group, coins_group)
     # вернем игрока, а также размер поля в клетках
     return new_player, x, y
 
@@ -40,8 +43,11 @@ class Level1:
         self.bg = pg.transform.scale(self.bg, (constants.width, constants.height))
         self.all_sprites = pg.sprite.Group()
         self.walls_group = pg.sprite.Group()
+        self.coins_group = pg.sprite.Group()
         self.map = load_level("level1.txt")
-        self.level = generate_level(self.map, self.all_sprites, self.walls_group)
+        self.level = generate_level(self.map, self.all_sprites, self.walls_group, self.coins_group)
+        self.font = pg.font.SysFont("Arial", 25)
+        self.coins_text = self.font.render(str(self.level[0].coins), True, pg.Color("coral"))
         self.camera = Camera()
         self.loading = True
         self.loader = 10
@@ -58,6 +64,9 @@ class Level1:
             return
         self.level[0].move(keys)
         self.all_sprites.draw(self.screen)
+        self.all_sprites.update()
+        self.coins_text = self.font.render(str(self.level[0].coins), True, pg.Color("coral"))
+        self.screen.blit(self.coins_text, (10, 0))
         self.camera.update(self.level[0])
         for sprite in self.all_sprites:
             self.camera.apply(sprite)

@@ -7,7 +7,7 @@ player_image = utils.load_image('mar.png')
 
 
 class Player(pg.sprite.Sprite):
-    def __init__(self, pos_x, pos_y, sprite_groups, walls_group):
+    def __init__(self, pos_x, pos_y, sprite_groups, walls_group, coins_group):
         super().__init__()
         for i in sprite_groups:
             i.add(self)
@@ -15,6 +15,7 @@ class Player(pg.sprite.Sprite):
         self.rect = self.image.get_rect().move(constants.tile_width * pos_x + 15,
                                                constants.tile_height * pos_y + 5 + constants.height / 2)
         self.walls_group = walls_group
+        self.coins_group = coins_group
         self.width = self.image.get_width()
         self.height = self.image.get_height()
         self.vel_y = 0
@@ -25,6 +26,7 @@ class Player(pg.sprite.Sprite):
         self.dy = 0
         self.old_time = 0.0
         self.time = pg.time.get_ticks()
+        self.coins = 0
 
     def move(self, keys):
         # dx = 0
@@ -66,6 +68,12 @@ class Player(pg.sprite.Sprite):
                     self.dy = tile.top - self.rect.bottom
                     self.vel_y = 0
                     self.in_air = False
+
+        for tile in self.coins_group:
+            tile_rect = tile.rect
+            if tile_rect.colliderect(self.rect.x + self.dx, self.rect.y, self.width, self.height) and not settings["debug"]:
+                tile.kill()
+                self.coins += 1
 
         self.rect.x += self.dx
         self.rect.y += self.dy
