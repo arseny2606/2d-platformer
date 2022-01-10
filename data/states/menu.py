@@ -27,9 +27,17 @@ class Menu:
         button.Button(self.buttons, "Exit", rect)
         self.x = 0
         self.y = 0
+        self.loading = True
+        self.loader = 10
 
     def update(self, keys, clicks):
         self.screen.blit(self.bg, (0, 0))
+        if self.loading:
+            pg.draw.rect(self.screen, "red", [100, constants.height // 2 - 5, self.loader, 10])
+            self.loader += 10
+            if self.loader >= 1080:
+                self.loading = False
+            return
         self.buttons.draw(self.screen)
         for i in self.buttons:
             state = i.update(clicks)
