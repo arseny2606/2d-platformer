@@ -2,8 +2,11 @@ import pygame as pg
 from .. import utils
 from .. import constants
 from ..settings import settings
+import time
 
-player_image = utils.load_image('mar.png')
+
+player_image = utils.load_image('player.png')
+player_image = pg.transform.scale(player_image, (1792, 64))
 
 
 class Player(pg.sprite.Sprite):
@@ -11,7 +14,16 @@ class Player(pg.sprite.Sprite):
         super().__init__()
         for i in sprite_groups:
             i.add(self)
-        self.image = player_image
+        self.frames = []
+        self.columns = 28
+        self.idle_frames = self.cut_sheet(player_image, 0, 9)
+        self.walk_frames = self.cut_sheet(player_image, 9, 15)
+        self.frames = self.idle_frames
+        self.cur_frame = 0
+        self.start_frame = time.time()
+        self.noi = 9
+        self.frames_per_second = 5
+        self.image = self.frames[self.cur_frame]
         self.rect = self.image.get_rect().move(constants.tile_width * pos_x + 15,
                                                constants.tile_height * pos_y + 5 + constants.height / 2)
         self.walls_group = walls_group
@@ -27,6 +39,19 @@ class Player(pg.sprite.Sprite):
         self.old_time = 0.0
         self.time = pg.time.get_ticks()
         self.coins = 0
+
+    def cut_sheet(self, sheet, start, end):
+        self.rect = pg.Rect(0, 0, sheet.get_width() // self.columns,
+                            sheet.get_height() // 1)
+        frames = []
+        for j in range(1):
+            for i in range(start, end):
+                frame_location = (self.rect.w * i, self.rect.h * j)
+                temp = sheet.subsurface(pg.Rect(
+                    frame_location, self.rect.size))
+                temp = temp.subsurface(pg.Rect(12, 12, 28, 40))
+                frames.append(temp)
+        return frames
 
     def move(self, keys):
         # dx = 0
@@ -77,3 +102,15 @@ class Player(pg.sprite.Sprite):
 
         self.rect.x += self.dx
         self.rect.y += self.dy
+
+        if self.dx == 0:
+            self.noi = 9
+            self.frames = self.idle_frames
+        else:
+            self.noi = 6
+            self.frames = self.walk_frames
+
+        self.cur_frame = int((time.time() - self.start_frame) * self.frames_per_second % self.noi)
+        self.image = self.frames[self.cur_frame]
+
+
