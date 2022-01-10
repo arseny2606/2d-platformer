@@ -47,7 +47,7 @@ class Level1:
         self.map = load_level("level1.txt")
         self.level = generate_level(self.map, self.all_sprites, self.walls_group, self.coins_group)
         self.font = pg.font.SysFont("Arial", 25)
-        self.coins_text = self.font.render(str(self.level[0].coins), True, pg.Color("coral"))
+        self.coins_text = self.font.render(f"Coins {self.level[0].coins}", True, pg.Color("gold"))
         self.camera = Camera()
         self.loading = True
         self.loader = 10
@@ -65,8 +65,8 @@ class Level1:
         self.level[0].move(keys)
         self.all_sprites.draw(self.screen)
         self.all_sprites.update()
-        self.coins_text = self.font.render(str(self.level[0].coins), True, pg.Color("coral"))
-        self.screen.blit(self.coins_text, (10, 0))
+        self.coins_text = self.font.render(f"Coins {self.level[0].coins}", True, pg.Color("gold"))
+        self.screen.blit(self.coins_text, (1150, 0))
         self.camera.update(self.level[0])
         for sprite in self.all_sprites:
             self.camera.apply(sprite)
