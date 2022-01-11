@@ -1,0 +1,16 @@
+{
+  "users": [
+    {
+      "name": "test1",
+      "score": 10
+    },
+    {
+      "name": "test3",
+      "score": 1
+    },
+    {
+      "name": "test5",
+      "score": 100
+    }
+  ]
+}

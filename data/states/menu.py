@@ -1,3 +1,5 @@
+import json
+
 import pygame as pg
 from .. import setup
 from ..components import button, checkbox
@@ -66,6 +68,29 @@ class Options:
             state = i.update(clicks)
             if state:
                 settings[self.states[state[0]]] = state[1]
+        if keys[pg.K_ESCAPE]:
+            return "back"
+
+
+class Leaderboard:
+    def __init__(self):
+        self.screen = setup.screen
+        self.bg = utils.load_image("bg.jpg")
+        self.bg = pg.transform.scale(self.bg, (constants.width, constants.height))
+        self.font = pg.font.SysFont("Comic Sans MS", 25)
+
+    def update(self, keys, clicks):
+        self.screen.blit(self.bg, (0, 0))
+        with open("resources/data/leaderboard.json") as f:
+            data = json.load(f)
+            leaderboard = data["users"]
+            leaderboard.sort(key=lambda x: x["score"], reverse=True)
+            leaderboard = leaderboard[:10]
+            y = constants.height // 3
+            for i in leaderboard:
+                text = self.font.render(f"{i['name']} - {i['score']}", True, pg.Color("red"))
+                self.screen.blit(text, (text.get_rect(center=(constants.width // 2, y))))
+                y += constants.height // 30
         if keys[pg.K_ESCAPE]:
             return "back"
 

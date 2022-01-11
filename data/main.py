@@ -72,6 +72,7 @@ class Control:
 def main():
     states = {"menu": menu.Menu(),
               "options": menu.Options(),
+              "leaderboard": menu.Leaderboard(),
               "story": menu.Levels(),
               "level1": level1.Level1,
               "level2": level2.Level2}
