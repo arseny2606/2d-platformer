@@ -77,7 +77,7 @@ class Leaderboard:
         self.screen = setup.screen
         self.bg = utils.load_image("bg.jpg")
         self.bg = pg.transform.scale(self.bg, (constants.width, constants.height))
-        self.font = pg.font.SysFont("Comic Sans MS", 25)
+        self.font = pg.font.SysFont("Arial", 60)
 
     def update(self, keys, clicks):
         self.screen.blit(self.bg, (0, 0))
@@ -90,7 +90,7 @@ class Leaderboard:
             for i in leaderboard:
                 text = self.font.render(f"{i['name']} - {i['score']}", True, pg.Color("red"))
                 self.screen.blit(text, (text.get_rect(center=(constants.width // 2, y))))
-                y += constants.height // 30
+                y += constants.height // 15
         if keys[pg.K_ESCAPE]:
             return "back"
 
