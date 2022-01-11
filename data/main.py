@@ -19,6 +19,8 @@ class Control:
         self.states = states
         self.previous = []
         self.state = self.states["menu"]
+        if callable(self.state):
+            self.state = self.state()
         self.font = pg.font.SysFont("Arial", 25)
         self.fps_text = None
 
@@ -42,10 +44,14 @@ class Control:
             self.running = False
         elif state == "back":
             self.state = self.previous[-1]
+            if callable(self.state):
+                self.state = self.state()
             del self.previous[-1]
         elif state:
             self.previous.append(self.state)
             self.state = self.states[state]
+            if callable(self.state):
+                self.state = self.state()
         if self.fps_text is not None:
             self.screen.blit(self.fps_text, (10, 0))
         pg.display.update()
@@ -67,8 +73,8 @@ def main():
     states = {"menu": menu.Menu(),
               "options": menu.Options(),
               "story": menu.Levels(),
-              "level1": level1.Level1(),
-              "level2": level2.Level2()}
+              "level1": level1.Level1,
+              "level2": level2.Level2}
 
     control = Control(states)
     control.main()

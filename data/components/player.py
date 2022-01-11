@@ -10,7 +10,7 @@ player_image = pg.transform.scale(player_image, (1792, 64))
 
 
 class Player(pg.sprite.Sprite):
-    def __init__(self, pos_x, pos_y, sprite_groups, walls_group, coins_group):
+    def __init__(self, game, pos_x, pos_y, sprite_groups, walls_group, coins_group, finish_group):
         super().__init__()
         for i in sprite_groups:
             i.add(self)
@@ -27,8 +27,10 @@ class Player(pg.sprite.Sprite):
         self.image = self.frames[self.cur_frame]
         self.rect = self.image.get_rect().move(constants.tile_width * pos_x + 15,
                                                constants.tile_height * pos_y + 5 + constants.height / 2)
+        self.game = game
         self.walls_group = walls_group
         self.coins_group = coins_group
+        self.finish_group = finish_group
         self.width = self.image.get_width()
         self.height = self.image.get_height()
         self.vel_y = 0
@@ -99,6 +101,11 @@ class Player(pg.sprite.Sprite):
             if tile_rect.colliderect(self.rect.x + self.dx, self.rect.y, self.width, self.height) and not settings["debug"]:
                 tile.kill()
                 self.coins += 1
+
+        for tile in self.finish_group:
+            tile_rect = tile.rect
+            if tile_rect.colliderect(self.rect.x + self.dx, self.rect.y, self.width, self.height) and not settings["debug"]:
+                self.game.finish()
 
         self.rect.x += self.dx
         self.rect.y += self.dy

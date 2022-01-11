@@ -3,12 +3,13 @@ from ... import setup
 from ... import utils
 from ... import constants
 from ...components.coin import Coin
+from ...components.door import Door
 from ...components.tile import Tile
 from ...components.player import Player
 from ...components.camera import Camera
 
 
-def generate_level(level, sprite_group, walls_group, coins_group):
+def generate_level(game, level, sprite_group, walls_group, coins_group, finish_group):
     new_player, x, y = None, None, None
     for y in range(len(level)):
         for x in range(len(level[y])):
@@ -19,7 +20,10 @@ def generate_level(level, sprite_group, walls_group, coins_group):
             elif level[y][x] == '%':
                 Coin([sprite_group, coins_group], utils.load_image("coin.png"), 9, 1, x, y)
             elif level[y][x] == '@':
-                new_player = Player(x, y, [sprite_group], walls_group, coins_group)
+                new_player = Player(game, x, y, [sprite_group], walls_group, coins_group,
+                                    finish_group)
+            elif level[y][x] == 'F':
+                Door(x, y, [sprite_group, finish_group])
     # вернем игрока, а также размер поля в клетках
     return new_player, x, y
 
@@ -44,8 +48,10 @@ class Level1:
         self.all_sprites = pg.sprite.Group()
         self.walls_group = pg.sprite.Group()
         self.coins_group = pg.sprite.Group()
+        self.finish_group = pg.sprite.Group()
         self.map = load_level("level1.txt")
-        self.level = generate_level(self.map, self.all_sprites, self.walls_group, self.coins_group)
+        self.level = generate_level(self, self.map, self.all_sprites, self.walls_group,
+                                    self.coins_group, self.finish_group)
         self.font = pg.font.SysFont("Arial", 25)
         self.coins_text = self.font.render(f"Coins {self.level[0].coins}", True, pg.Color("gold"))
         self.camera = Camera()
@@ -53,8 +59,11 @@ class Level1:
         self.loader = 10
         self.x = 0
         self.y = 0
+        self.is_finished = False
 
     def update(self, keys, clicks):
+        if self.is_finished:
+            return "back"
         self.screen.blit(self.bg, (0, 0))
         if self.loading:
             pg.draw.rect(self.screen, "red", [100, constants.height // 2 - 5, self.loader, 10])
@@ -70,5 +79,17 @@ class Level1:
         self.camera.update(self.level[0])
         for sprite in self.all_sprites:
             self.camera.apply(sprite)
+        if keys[pg.K_r]:
+            self.all_sprites = pg.sprite.Group()
+            self.walls_group = pg.sprite.Group()
+            self.coins_group = pg.sprite.Group()
+            self.map = load_level("level1.txt")
+            self.level = generate_level(self, self.map, self.all_sprites, self.walls_group,
+                                        self.coins_group, self.finish_group)
+            self.camera = Camera()
+        self.level[0].update()
         if keys[pg.K_ESCAPE]:
             return "back"
+
+    def finish(self):
+        self.is_finished = True
