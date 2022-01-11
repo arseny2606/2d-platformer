@@ -10,6 +10,7 @@ class Menu:
     def __init__(self):
         self.states = {"Story mode": "story",
                        "Infinite mode": "infinite",
+                       "Leaderboard": "leaderboard",
                        "Options": "options",
                        "Exit": "exit"}
         self.screen = setup.screen
@@ -21,6 +22,8 @@ class Menu:
         button.Button(self.buttons, "Story mode", rect)
         rect.y += 60
         button.Button(self.buttons, "Infinite mode", rect)
+        rect.y += 60
+        button.Button(self.buttons, "Leaderboard", rect)
         rect.y += 60
         button.Button(self.buttons, "Options", rect)
         rect.y += 60
