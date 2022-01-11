@@ -23,7 +23,7 @@ class InputBox(pg.sprite.Sprite):
         self.old_time = 0.0
         self.time = pg.time.get_ticks()
 
-    def update(self, clicks, keys):
+    def update(self, clicks, keys, key_events):
         self.time = pg.time.get_ticks()
         utils.draw_text(self.text, 30, "white", self.screen, self.center)
         if self.old_time + 120 < self.time:
@@ -34,7 +34,7 @@ class InputBox(pg.sprite.Sprite):
                 else:
                     self.active = False
                 self.color = self.color_active if self.active else self.color_inactive
-        for event in pg.event.get(pg.KEYDOWN):
+        for event in key_events:
             if self.active:
                 if event.key == pg.K_RETURN:
                     return self.text, self.nick

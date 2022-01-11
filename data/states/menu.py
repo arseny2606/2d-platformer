@@ -66,7 +66,7 @@ class Options:
         rect.y += 60
         inputbox.InputBox(self.checkboxes, "NickName", rect)
 
-    def update(self, keys, clicks):
+    def update(self, keys, clicks, key_events):
         self.screen.blit(self.bg, (0, 0))
         self.buttons.draw(self.screen)
         for i in self.buttons:
@@ -74,7 +74,7 @@ class Options:
             if state:
                 settings[self.states[state[0]]] = state[1]
         for i in self.checkboxes:
-            nickname = i.update(clicks, keys)
+            nickname = i.update(clicks, keys, key_events)
             if nickname:
                 settings[self.states[nickname[0]]] = nickname[1]
         if keys[pg.K_ESCAPE]:

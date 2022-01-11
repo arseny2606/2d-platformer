@@ -25,21 +25,27 @@ class Control:
         self.fps_text = None
 
     def event_loop(self):
+        key_events = []
         for event in pg.event.get():
             if event.type == pg.QUIT:
                 self.running = False
             if event.type == pg.KEYDOWN:
                 self.keys = pg.key.get_pressed()
+                key_events.append(event)
             if event.type == pg.KEYUP:
                 self.keys = pg.key.get_pressed()
             if event.type == pg.MOUSEBUTTONDOWN:
                 self.clicks = pg.mouse.get_pressed()
             if event.type == pg.MOUSEBUTTONUP:
                 self.clicks = pg.mouse.get_pressed()
+        return key_events
 
-    def update(self):
+    def update(self, key_events):
         self.screen.fill((0, 0, 0))
-        state = self.state.update(self.keys, self.clicks)
+        if self.state == self.states["options"]:
+            state = self.state.update(self.keys, self.clicks, key_events)
+        else:
+            state = self.state.update(self.keys, self.clicks)
         if state == "exit":
             self.running = False
         elif state == "back":
@@ -58,8 +64,8 @@ class Control:
 
     def main(self):
         while self.running:
-            self.event_loop()
-            self.update()
+            key_events = self.event_loop()
+            self.update(key_events)
             self.clock.tick(self.fps)
             if settings["show_fps"]:
                 fps = self.clock.get_fps()
