@@ -2,7 +2,7 @@ import json
 
 import pygame as pg
 from .. import setup
-from ..components import button, checkbox
+from ..components import button, checkbox, inputbox
 from .. import utils
 from .. import constants
 from ..settings import settings
@@ -53,13 +53,18 @@ class Menu:
 
 class Options:
     def __init__(self):
-        self.states = {"Show FPS": "show_fps"}
+        self.states = {"Show FPS": "show_fps",
+                       "NickName": "nickname"}
         self.screen = setup.screen
         self.buttons = pg.sprite.Group()
+        self.checkboxes = pg.sprite.Group()
         self.bg = utils.load_image("bg.jpg")
         self.bg = pg.transform.scale(self.bg, (constants.width, constants.height))
         rect = self.screen.get_rect()
+        rect.y -= 30
         checkbox.CheckBox(self.buttons, "Show FPS", rect)
+        rect.y += 60
+        inputbox.InputBox(self.checkboxes, "NickName", rect)
 
     def update(self, keys, clicks):
         self.screen.blit(self.bg, (0, 0))
@@ -68,6 +73,10 @@ class Options:
             state = i.update(clicks)
             if state:
                 settings[self.states[state[0]]] = state[1]
+        for i in self.checkboxes:
+            nickname = i.update(clicks, keys)
+            if nickname:
+                settings[self.states[nickname[0]]] = nickname[1]
         if keys[pg.K_ESCAPE]:
             return "back"
 

@@ -1,1 +1,1 @@
-settings = {"show_fps": False, "debug": False}
+settings = {"show_fps": False, "debug": False, "nickname": "Player"}
