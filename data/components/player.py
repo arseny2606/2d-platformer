@@ -57,17 +57,6 @@ class Player(pg.sprite.Sprite):
         return frames
 
     def move(self, keys):
-
-        if keys[pg.K_LEFT]:
-            self.noi = 6
-            self.frames = self.backward_walk_frames
-        elif keys[pg.K_RIGHT]:
-            self.noi = 6
-            self.frames = self.walk_frames
-        elif not keys[pg.K_UP]:
-            self.noi = 9
-            self.frames = self.idle_frames
-        # dx = 0
         self.time = pg.time.get_ticks()
         self.dy = 0
         if keys[pg.K_SPACE] and self.old_time + 60 < self.time:
@@ -87,12 +76,10 @@ class Player(pg.sprite.Sprite):
             if self.dx > 5 and not settings["debug"]:
                 self.dx = 5
             self.direction = 1
-
         self.vel_y += 0.5
         if self.vel_y > 5:
             self.vel_y = 5
         self.dy += self.vel_y
-
         self.in_air = True
         for tile in self.walls_group:
             tile = tile.rect
@@ -119,4 +106,13 @@ class Player(pg.sprite.Sprite):
         self.cur_frame = int((time.time() - self.start_frame) * self.frames_per_second % self.noi)
         self.image = self.frames[self.cur_frame]
 
-
+    def update(self):
+        if self.dx > 0:
+            self.noi = 6
+            self.frames = self.walk_frames
+        elif self.dx < 0:
+            self.noi = 6
+            self.frames = self.backward_walk_frames
+        else:
+            self.noi = 9
+            self.frames = self.idle_frames
