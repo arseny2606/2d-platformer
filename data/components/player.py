@@ -170,7 +170,7 @@ class InfinitePlayer(Player):
                 "debug"]:
                 self.game.finish()
 
-        self.rect.x += self.dx
+        self.rect.x += 5
         self.rect.y += self.dy
 
         self.cur_frame = int((time.time() - self.start_frame) * self.frames_per_second % self.noi)

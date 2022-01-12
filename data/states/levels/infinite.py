@@ -81,12 +81,6 @@ class InfiniteLevel:
         self.level[0].move(keys)
         self.all_sprites.draw(self.screen)
         self.all_sprites.update()
-        for i in self.walls_group:
-            i.move()
-        for i in self.finish_group:
-            i.move()
-        for i in self.coins_group:
-            i.move()
         self.coins_text = self.font.render(f"Coins {self.level[0].coins}", True, pg.Color("gold"))
         self.screen.blit(self.coins_text, (1150, 0))
         self.camera.update(self.level[0])
