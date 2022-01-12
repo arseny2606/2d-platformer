@@ -87,6 +87,7 @@ class Level1:
             self.all_sprites = pg.sprite.Group()
             self.walls_group = pg.sprite.Group()
             self.coins_group = pg.sprite.Group()
+            self.finish_group = pg.sprite.Group()
             self.map = load_level("level1.txt")
             self.level = generate_level(self, self.map, self.all_sprites, self.walls_group,
                                         self.coins_group, self.finish_group)

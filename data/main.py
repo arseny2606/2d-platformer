@@ -7,6 +7,7 @@ from .settings import settings
 from .states import menu
 from .states.levels import level1
 from .states.levels import level2
+from .states.levels import infinite
 
 
 def load_settings():
@@ -97,6 +98,7 @@ def main():
               "leaderboard": menu.Leaderboard(),
               "story": menu.Levels(),
               "level1": level1.Level1,
-              "level2": level2.Level2}
+              "level2": level2.Level2,
+              "infinite": infinite.InfiniteLevel}
     control = Control(states)
     control.main()

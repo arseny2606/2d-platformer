@@ -1,5 +1,5 @@
 {
-    "show_fps": 1,
+    "show_fps": false,
     "debug": false,
     "nickname": "Player222"
 }
