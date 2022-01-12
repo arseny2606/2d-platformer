@@ -1,5 +1,6 @@
 import datetime
 import json
+import random
 
 import pygame as pg
 from ... import setup
@@ -10,23 +11,6 @@ from ...components.coin import Coin
 from ...components.tile import Tile, DangerTile
 from ...components.player import InfinitePlayer
 from ...components.camera import Camera
-
-
-def generate_level(game, level, sprite_group, walls_group, coins_group, finish_group, player, old_x):
-    x, y = 0, 0
-    for y in range(len(level)):
-        for x in range(len(level[y])):
-            if level[y][x] == '#':
-                Tile('box', x + old_x, y, [sprite_group, walls_group])
-            if level[y][x] == '!':
-                DangerTile('danger', x + old_x, y, [sprite_group, finish_group])
-            elif level[y][x] == '%':
-                Coin([sprite_group, coins_group], utils.load_image("coin.png"), 9, 1, x + old_x, y)
-            elif level[y][x] == '@':
-                player = InfinitePlayer(game, x, y, [sprite_group], walls_group, coins_group,
-                                        finish_group)
-    # вернем игрока, а также размер поля в клетках
-    return player, x + old_x, y
 
 
 def load_level(filename):
@@ -50,15 +34,16 @@ class InfiniteLevel:
         self.walls_group = pg.sprite.Group()
         self.coins_group = pg.sprite.Group()
         self.finish_group = pg.sprite.Group()
+        self.walls_segment = []
+        self.danger_segment = []
+        self.coins_segment = []
         self.map = load_level("infinite_start.txt")
-        self.level = generate_level(self, self.map, self.all_sprites, self.walls_group,
-                                    self.coins_group, self.finish_group, None, 0)
-        self.map = load_level("infinite_seg5.txt")
-        self.level = generate_level(self, self.map, self.all_sprites, self.walls_group,
-                                    self.coins_group, self.finish_group, self.level[0], self.level[1])
-        self.map = load_level("infinite_seg2.txt")
-        self.level = generate_level(self, self.map, self.all_sprites, self.walls_group,
-                                    self.coins_group, self.finish_group, self.level[0], self.level[1])
+        self.level = self.generate_level(self, self.map, self.all_sprites, self.walls_group,
+                                         self.coins_group, self.finish_group, None, 0)
+        for i in range(2):
+            self.map = load_level(f"infinite_seg{random.randint(1, 6)}.txt")
+            self.level = self.generate_level(self, self.map, self.all_sprites, self.walls_group,
+                                             self.coins_group, self.finish_group, self.level[0], self.level[1])
         self.font = pg.font.SysFont("Arial", 25)
         self.coins_text = self.font.render(f"Coins {self.level[0].coins}", True, pg.Color("gold"))
         self.camera = Camera()
@@ -67,6 +52,7 @@ class InfiniteLevel:
         self.x = 0
         self.y = 0
         self.is_finished = False
+        self.check = True
 
     def update(self, keys, clicks):
         if self.is_finished:
@@ -87,6 +73,23 @@ class InfiniteLevel:
         for sprite in self.all_sprites:
             self.camera.apply(sprite)
         self.level[0].update()
+        if self.walls_group.sprites()[0].rect.x <= -500 and self.check:
+            self.check = False
+            for i in range(2):
+                for j in self.walls_segment[i]:
+                    self.walls_group.remove(j)
+                    self.all_sprites.remove(j)
+            last_x = self.walls_group.sprites()[-1].rect.x
+            self.coins_group = pg.sprite.Group()
+            self.finish_group = pg.sprite.Group()
+            self.level[0].walls_group = self.walls_group
+            self.level[0].coins_group = self.coins_group
+            self.level[0].finish_group = self.finish_group
+            for i in range(5):
+                self.map = load_level(f"infinite_seg{random.randint(1, 6)}.txt")
+                self.level = self.generate_level_next(self, self.map, self.all_sprites, self.walls_group,
+                                                      self.coins_group, self.finish_group, self.level[0], self.level[1], last_x)
+
         if keys[pg.K_ESCAPE]:
             return "back"
 
@@ -100,3 +103,43 @@ class InfiniteLevel:
                                      "level": 1})
         with open("resources/data/leaderboard.json", "w") as f:
             json.dump(leaderboard, f, indent=4)
+
+    def generate_level(self, game, level, sprite_group, walls_group, coins_group, finish_group, player, old_x):
+        x, y = 0, 0
+        temp_walls = []
+        temp_danger = []
+        temp_coins = []
+        for y in range(len(level)):
+            for x in range(len(level[y])):
+                if level[y][x] == '#':
+                    f = Tile('box', x + old_x, y, [sprite_group, walls_group])
+                    temp_walls.append(f)
+                if level[y][x] == '!':
+                    f = DangerTile('danger', x + old_x, y, [sprite_group, finish_group])
+                    temp_danger.append(f)
+                elif level[y][x] == '%':
+                    f = Coin([sprite_group, coins_group], utils.load_image("coin.png"), 9, 1, x + old_x, y)
+                    temp_coins.append(f)
+                elif level[y][x] == '@':
+                    player = InfinitePlayer(game, x, y, [sprite_group], walls_group, coins_group,
+                                            finish_group)
+        # вернем игрока, а также размер поля в клетках
+        self.walls_segment.append(temp_walls)
+        self.danger_segment.append(temp_danger)
+        self.coins_segment.append(temp_coins)
+        return player, x + old_x, y
+
+    def generate_level_next(self, game, level, sprite_group, walls_group, coins_group, finish_group, player, old_x, last_x):
+        x, y = 0, 0
+        for y in range(len(level)):
+            for x in range(len(level[y])):
+                if level[y][x] == '#':
+                    f = Tile('box', x + old_x, y, [sprite_group, walls_group])
+                if level[y][x] == '!':
+                    f = DangerTile('danger', x + old_x, y, [sprite_group, finish_group])
+                elif level[y][x] == '%':
+                    f = Coin([sprite_group, coins_group], utils.load_image("coin.png"), 9, 1, x + old_x, y)
+                f.rect.y -= 230
+                f.rect.x =
+        # вернем игрока, а также размер поля в клетках
+        return player, x + old_x, y
