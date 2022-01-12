@@ -99,6 +99,7 @@ class Level2:
             leaderboard = json.load(f)
         leaderboard["users"].append({"name": settings["nickname"],
                                      "time": datetime.datetime.now().strftime("%d.%m.%y в %H:%M"),
-                                     "score": self.level[0].coins})
+                                     "score": self.level[0].coins,
+                                     "level": 2})
         with open("resources/data/leaderboard.json", "w") as f:
             json.dump(leaderboard, f, indent=4)

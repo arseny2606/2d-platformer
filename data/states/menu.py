@@ -98,29 +98,59 @@ class Leaderboard:
         self.screen = setup.screen
         self.bg = utils.load_image("bg.jpg")
         self.bg = pg.transform.scale(self.bg, (constants.width, constants.height))
-        self.font = pg.font.SysFont("Arial", 60)
+        self.font = pg.font.SysFont("Arial", 30)
 
     def update(self, keys, clicks):
         self.screen.blit(self.bg, (0, 0))
         with open("resources/data/leaderboard.json") as f:
             data = json.load(f)
             leaderboard = data["users"]
-            leaderboard.sort(key=lambda x: x["score"], reverse=True)
-            leaderboard = leaderboard[:10]
+            leaderboard_1 = list(filter(lambda x: x["level"] == 1, leaderboard))
+            leaderboard_1.sort(key=lambda x: x["score"], reverse=True)
+            leaderboard_1 = leaderboard_1[:10]
             y = constants.height // 4
-            if len(leaderboard) == 0:
-                text = self.font.render("Результатов пока нет", True,
+            text = self.font.render("Level 1:", True,
+                                    pg.Color("red"))
+            self.screen.blit(text, (text.get_rect(center=(constants.width // 4, y))))
+            y += constants.height // 20
+            if len(leaderboard_1) == 0:
+                text = self.font.render("There is no results", True,
                                         pg.Color("red"))
-                self.screen.blit(text, (text.get_rect(center=(constants.width // 2, y))))
-                y += constants.height // 15
-                text = self.font.render("Будьте первым, кто поставит рекорд!", True,
+                self.screen.blit(text, (text.get_rect(center=(constants.width // 4, y))))
+                y += constants.height // 20
+                text = self.font.render("Be the first to set a record!", True,
                                         pg.Color("red"))
-                self.screen.blit(text, (text.get_rect(center=(constants.width // 2, y))))
-            for i in leaderboard:
+                self.screen.blit(text, (text.get_rect(center=(constants.width // 4, y))))
+            for i in leaderboard_1:
+                if len(i['name']) > 30:
+                    i['name'] = i['name'][:30] + '...'
                 text = self.font.render(f"{i['name']} {i['time']} - {i['score']}", True,
                                         pg.Color("red"))
-                self.screen.blit(text, (text.get_rect(center=(constants.width // 2, y))))
-                y += constants.height // 15
+                self.screen.blit(text, (text.get_rect(center=(constants.width // 4, y))))
+                y += constants.height // 20
+            leaderboard_2 = list(filter(lambda x: x["level"] == 2, leaderboard))
+            leaderboard_2.sort(key=lambda x: x["score"], reverse=True)
+            leaderboard_2 = leaderboard_2[:10]
+            y = constants.height // 4
+            text = self.font.render("Level 2:", True,
+                                    pg.Color("red"))
+            self.screen.blit(text, (text.get_rect(center=(constants.width // 4 * 3, y))))
+            y += constants.height // 20
+            if len(leaderboard_2) == 0:
+                text = self.font.render("There is no results", True,
+                                        pg.Color("red"))
+                self.screen.blit(text, (text.get_rect(center=(constants.width // 4 * 3, y))))
+                y += constants.height // 20
+                text = self.font.render("Be the first to set a record!", True,
+                                        pg.Color("red"))
+                self.screen.blit(text, (text.get_rect(center=(constants.width // 4 * 3, y))))
+            for i in leaderboard_2:
+                if len(i['name']) > 30:
+                    i['name'] = i['name'][:30] + '...'
+                text = self.font.render(f"{i['name']} {i['time']} - {i['score']}", True,
+                                        pg.Color("red"))
+                self.screen.blit(text, (text.get_rect(center=(constants.width // 4 * 3, y))))
+                y += constants.height // 20
         if keys[pg.K_ESCAPE]:
             return "back"
 
