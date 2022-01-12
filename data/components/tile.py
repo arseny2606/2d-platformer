@@ -19,6 +19,9 @@ class Tile(pg.sprite.Sprite):
         self.dx = 0
         self.direction = 0
 
+    def move(self):
+        self.rect.x -= 5
+
 
 class DangerTile(Tile):
     def __init__(self, tile_type, pos_x, pos_y, sprite_groups):

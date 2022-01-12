@@ -30,3 +30,6 @@ class Coin(pg.sprite.Sprite):
     def update(self):
         self.cur_frame = int((time.time() - self.start_frame) * self.frames_per_second % self.noi)
         self.image = self.frames[self.cur_frame]
+
+    def move(self):
+        self.rect.x -= 5
