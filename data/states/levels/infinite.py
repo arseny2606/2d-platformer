@@ -76,15 +76,24 @@ class InfiniteLevel:
         self.level[0].update()
         if self.walls_group.sprites()[0].rect.x <= -1100:
             for i in range(2):
-                for j in self.walls_segment[i]:
+                for j in self.walls_segment[0]:
                     self.walls_group.remove(j)
                     self.all_sprites.remove(j)
-                for j in self.coins_segment[i]:
-                    self.coins_group.remove(j)
-                    self.all_sprites.remove(j)
-                for j in self.danger_segment[i]:
-                    self.finish_group.remove(j)
-                    self.all_sprites.remove(j)
+                del self.walls_segment[0]
+                try:
+                    for j in self.coins_segment[0]:
+                        self.coins_group.remove(j)
+                        self.all_sprites.remove(j)
+                    del self.coins_segment[0]
+                except IndexError:
+                    pass
+                try:
+                    for j in self.danger_segment[0]:
+                        self.finish_group.remove(j)
+                        self.all_sprites.remove(j)
+                    del self.danger_segment[0]
+                except IndexError:
+                    pass
             last_x = self.walls_group.sprites()[-1].rect.x
             self.level[0].walls_group = self.walls_group
             self.level[0].coins_group = self.coins_group
@@ -137,16 +146,25 @@ class InfiniteLevel:
 
     def generate_level_next(self, game, level, sprite_group, walls_group, coins_group, finish_group, player, old_x, last_x):
         x, y = 0, 0
+        temp_walls = []
+        temp_danger = []
+        temp_coins = []
         for y in range(len(level)):
             for x in range(len(level[y])):
                 if level[y][x] == '#':
                     f = Tile('box', x + old_x, y, [sprite_group, walls_group])
                     f.rect.x = last_x + constants.tile_width * (x + old_x)
+                    temp_walls.append(f)
                 if level[y][x] == '!':
                     f = DangerTile('danger', x + old_x, y, [sprite_group, finish_group])
                     f.rect.x = last_x + constants.tile_width * (x + old_x)
+                    temp_danger.append(f)
                 elif level[y][x] == '%':
                     f = Coin([sprite_group, coins_group], utils.load_image("coin.png"), 9, 1, x + old_x, y)
                     f.rect.x = last_x + constants.tile_width * (x + old_x)
+                    temp_coins.append(f)
         # вернем игрока, а также размер поля в клетках
+        self.walls_segment.append(temp_walls)
+        self.danger_segment.append(temp_danger)
+        self.coins_segment.append(temp_coins)
         return player, x + old_x, y
