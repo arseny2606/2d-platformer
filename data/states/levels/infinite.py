@@ -135,10 +135,12 @@ class InfiniteLevel:
             for x in range(len(level[y])):
                 if level[y][x] == '#':
                     f = Tile('box', x + old_x, y, [sprite_group, walls_group])
+                    f.rect.y -= 230
                 if level[y][x] == '!':
                     f = DangerTile('danger', x + old_x, y, [sprite_group, finish_group])
+                    f.rect.y -= 230
                 elif level[y][x] == '%':
                     f = Coin([sprite_group, coins_group], utils.load_image("coin.png"), 9, 1, x + old_x, y)
-                f.rect.y -= 230
+                    f.rect.y -= 230
         # вернем игрока, а также размер поля в клетках
         return player, x + old_x, y
