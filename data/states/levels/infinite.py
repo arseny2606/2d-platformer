@@ -140,6 +140,5 @@ class InfiniteLevel:
                 elif level[y][x] == '%':
                     f = Coin([sprite_group, coins_group], utils.load_image("coin.png"), 9, 1, x + old_x, y)
                 f.rect.y -= 230
-                f.rect.x =
         # вернем игрока, а также размер поля в клетках
         return player, x + old_x, y
