@@ -1,7 +1,11 @@
+import datetime
+import json
+
 import pygame as pg
 from ... import setup
 from ... import utils
 from ... import constants
+from ...settings import settings
 from ...components.coin import Coin
 from ...components.door import Door
 from ...components.tile import Tile
@@ -91,4 +95,10 @@ class Level2:
 
     def finish(self):
         self.is_finished = True
-
+        with open("resources/data/leaderboard.json") as f:
+            leaderboard = json.load(f)
+        leaderboard["users"].append({"name": settings["nickname"],
+                                     "time": datetime.datetime.now().strftime("%d.%m.%y в %H:%M"),
+                                     "score": self.level[0].coins})
+        with open("resources/data/leaderboard.json", "w") as f:
+            json.dump(leaderboard, f, indent=4)

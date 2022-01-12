@@ -107,9 +107,18 @@ class Leaderboard:
             leaderboard = data["users"]
             leaderboard.sort(key=lambda x: x["score"], reverse=True)
             leaderboard = leaderboard[:10]
-            y = constants.height // 3
+            y = constants.height // 4
+            if len(leaderboard) == 0:
+                text = self.font.render("Результатов пока нет", True,
+                                        pg.Color("red"))
+                self.screen.blit(text, (text.get_rect(center=(constants.width // 2, y))))
+                y += constants.height // 15
+                text = self.font.render("Будьте первым, кто поставит рекорд!", True,
+                                        pg.Color("red"))
+                self.screen.blit(text, (text.get_rect(center=(constants.width // 2, y))))
             for i in leaderboard:
-                text = self.font.render(f"{i['name']} - {i['score']}", True, pg.Color("red"))
+                text = self.font.render(f"{i['name']} {i['time']} - {i['score']}", True,
+                                        pg.Color("red"))
                 self.screen.blit(text, (text.get_rect(center=(constants.width // 2, y))))
                 y += constants.height // 15
         if keys[pg.K_ESCAPE]:
