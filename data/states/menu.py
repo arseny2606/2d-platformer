@@ -54,29 +54,42 @@ class Menu:
 class Options:
     def __init__(self):
         self.states = {"Show FPS": "show_fps",
-                       "NickName": "nickname"}
+                       "NickName": "nickname",
+                       "Save": "save"}
         self.screen = setup.screen
         self.buttons = pg.sprite.Group()
         self.checkboxes = pg.sprite.Group()
+        self.inputboxes = pg.sprite.Group()
         self.bg = utils.load_image("bg.jpg")
         self.bg = pg.transform.scale(self.bg, (constants.width, constants.height))
         rect = self.screen.get_rect()
         rect.y -= 30
-        checkbox.CheckBox(self.buttons, "Show FPS", rect)
+        checkbox.CheckBox(self.checkboxes, "Show FPS", rect)
         rect.y += 60
-        inputbox.InputBox(self.checkboxes, "NickName", rect)
+        inputbox.InputBox(self.inputboxes, "NickName", rect)
+        rect.y += 180
+        button.Button(self.buttons, "Save", rect)
 
     def update(self, keys, clicks, key_events):
         self.screen.blit(self.bg, (0, 0))
         self.buttons.draw(self.screen)
-        for i in self.buttons:
+        self.checkboxes.draw(self.screen)
+        for i in self.checkboxes:
             state = i.update(clicks)
             if state:
                 settings[self.states[state[0]]] = state[1]
-        for i in self.checkboxes:
+        for i in self.inputboxes:
             nickname = i.update(clicks, keys, key_events)
             if nickname:
                 settings[self.states[nickname[0]]] = nickname[1]
+        self.buttons.draw(self.screen)
+        for i in self.buttons:
+            state = i.update(clicks)
+            if state:
+                for j in self.inputboxes:
+                    settings["nickname"] = j.update(clicks, keys, key_events)[1]
+                print(settings["nickname"])
+                return "back"
         if keys[pg.K_ESCAPE]:
             return "back"
 

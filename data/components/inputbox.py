@@ -47,5 +47,4 @@ class InputBox(pg.sprite.Sprite):
         self.input_box.w = width
         self.screen.blit(txt_surface, (self.input_box.x + 5, self.input_box.y))
         pg.draw.rect(self.screen, self.color, self.input_box, 2)
-
-        return None
+        return self.text, self.nick
