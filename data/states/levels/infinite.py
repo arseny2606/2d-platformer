@@ -40,7 +40,7 @@ class InfiniteLevel:
         self.map = load_level("infinite_start.txt")
         self.level = self.generate_level(self, self.map, self.all_sprites, self.walls_group,
                                          self.coins_group, self.finish_group, None, 0)
-        for i in range(2):
+        for i in range(5):
             self.map = load_level(f"infinite_seg{random.randint(1, 6)}.txt")
             self.level = self.generate_level(self, self.map, self.all_sprites, self.walls_group,
                                              self.coins_group, self.finish_group, self.level[0], self.level[1])
@@ -51,7 +51,6 @@ class InfiniteLevel:
         self.x = 0
         self.y = 0
         self.is_finished = False
-        self.check = True
 
     def update(self, keys, clicks):
         if self.is_finished:
@@ -75,8 +74,7 @@ class InfiniteLevel:
         self.coins_text = self.font.render(f"Coins {self.level[0].coins}", True, pg.Color("gold"))
         self.screen.blit(self.coins_text, (1150, 0))
         self.level[0].update()
-        if self.walls_group.sprites()[0].rect.x <= -500 and self.check:
-            self.check = False
+        if self.walls_group.sprites()[0].rect.x <= -1100:
             for i in range(2):
                 for j in self.walls_segment[i]:
                     self.walls_group.remove(j)
@@ -85,14 +83,14 @@ class InfiniteLevel:
                     self.coins_group.remove(j)
                     self.all_sprites.remove(j)
                 for j in self.danger_segment[i]:
-                    self.danger_segment.remove(j)
+                    self.finish_group.remove(j)
                     self.all_sprites.remove(j)
             last_x = self.walls_group.sprites()[-1].rect.x
             self.level[0].walls_group = self.walls_group
             self.level[0].coins_group = self.coins_group
             self.level[0].finish_group = self.finish_group
             old_x = 0
-            for i in range(5):
+            for i in range(2):
                 self.map = load_level(f"infinite_seg{random.randint(1, 6)}.txt")
                 self.level = self.generate_level_next(self, self.map, self.all_sprites, self.walls_group,
                                                       self.coins_group, self.finish_group, self.level[0], old_x, last_x)
