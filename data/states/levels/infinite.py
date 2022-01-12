@@ -46,7 +46,6 @@ class InfiniteLevel:
                                              self.coins_group, self.finish_group, self.level[0], self.level[1])
         self.font = pg.font.SysFont("Arial", 25)
         self.coins_text = self.font.render(f"Coins {self.level[0].coins}", True, pg.Color("gold"))
-        self.camera = Camera()
         self.loading = True
         self.loader = 10
         self.x = 0
@@ -75,9 +74,6 @@ class InfiniteLevel:
             i.move()
         self.coins_text = self.font.render(f"Coins {self.level[0].coins}", True, pg.Color("gold"))
         self.screen.blit(self.coins_text, (1150, 0))
-        self.camera.update(self.level[0])
-        for sprite in self.all_sprites:
-            self.camera.apply(sprite)
         self.level[0].update()
         if self.walls_group.sprites()[0].rect.x <= -500 and self.check:
             self.check = False
@@ -85,16 +81,22 @@ class InfiniteLevel:
                 for j in self.walls_segment[i]:
                     self.walls_group.remove(j)
                     self.all_sprites.remove(j)
+                for j in self.coins_segment[i]:
+                    self.coins_group.remove(j)
+                    self.all_sprites.remove(j)
+                for j in self.danger_segment[i]:
+                    self.danger_segment.remove(j)
+                    self.all_sprites.remove(j)
             last_x = self.walls_group.sprites()[-1].rect.x
-            self.coins_group = pg.sprite.Group()
-            self.finish_group = pg.sprite.Group()
             self.level[0].walls_group = self.walls_group
             self.level[0].coins_group = self.coins_group
             self.level[0].finish_group = self.finish_group
+            old_x = 0
             for i in range(5):
                 self.map = load_level(f"infinite_seg{random.randint(1, 6)}.txt")
                 self.level = self.generate_level_next(self, self.map, self.all_sprites, self.walls_group,
-                                                      self.coins_group, self.finish_group, self.level[0], self.level[1], last_x)
+                                                      self.coins_group, self.finish_group, self.level[0], old_x, last_x)
+                old_x = self.level[1]
 
         if keys[pg.K_ESCAPE]:
             return "back"
@@ -141,12 +143,12 @@ class InfiniteLevel:
             for x in range(len(level[y])):
                 if level[y][x] == '#':
                     f = Tile('box', x + old_x, y, [sprite_group, walls_group])
-                    f.rect.y -= 230
+                    f.rect.x = last_x + constants.tile_width * (x + old_x)
                 if level[y][x] == '!':
                     f = DangerTile('danger', x + old_x, y, [sprite_group, finish_group])
-                    f.rect.y -= 230
+                    f.rect.x = last_x + constants.tile_width * (x + old_x)
                 elif level[y][x] == '%':
                     f = Coin([sprite_group, coins_group], utils.load_image("coin.png"), 9, 1, x + old_x, y)
-                    f.rect.y -= 230
+                    f.rect.x = last_x + constants.tile_width * (x + old_x)
         # вернем игрока, а также размер поля в клетках
         return player, x + old_x, y
