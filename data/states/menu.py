@@ -64,7 +64,7 @@ class Options:
         self.bg = pg.transform.scale(self.bg, (constants.width, constants.height))
         rect = self.screen.get_rect()
         rect.y -= 30
-        checkbox.CheckBox(self.checkboxes, "Show FPS", rect)
+        checkbox.CheckBox(self.checkboxes, "Show FPS", rect, settings["show_fps"])
         rect.y += 60
         inputbox.InputBox(self.inputboxes, "NickName", rect)
         rect.y += 180
@@ -88,7 +88,6 @@ class Options:
             if state:
                 for j in self.inputboxes:
                     settings["nickname"] = j.update(clicks, keys, key_events)[1]
-                print(settings["nickname"])
                 return "back"
         if keys[pg.K_ESCAPE]:
             return "back"

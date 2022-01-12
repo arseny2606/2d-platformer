@@ -4,7 +4,7 @@ from .. import utils
 
 
 class CheckBox(pg.sprite.Sprite):
-    def __init__(self, group, text, rect):
+    def __init__(self, group, text, rect, checked=False):
         super().__init__(group)
         self.screen = setup.screen
         self.chk_image = utils.load_image("checkbox/checkbox.png")
@@ -19,7 +19,7 @@ class CheckBox(pg.sprite.Sprite):
         self.text = text
         self.old_time = 0.0
         self.time = pg.time.get_ticks()
-        self.checked = False
+        self.checked = checked
 
     def update(self, clicks):
         self.time = pg.time.get_ticks()

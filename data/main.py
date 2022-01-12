@@ -16,6 +16,11 @@ def load_settings():
             settings[i[0]] = i[1]
 
 
+def save_settings():
+    with open("resources/data/settings.json", "w") as f:
+        json.dump(settings, f, indent=4)
+
+
 class Control:
     def __init__(self, states):
         self.screen = setup.screen
@@ -37,6 +42,7 @@ class Control:
         for event in pg.event.get():
             if event.type == pg.QUIT:
                 self.running = False
+                save_settings()
             if event.type == pg.KEYDOWN:
                 self.keys = pg.key.get_pressed()
                 key_events.append(event)
@@ -56,6 +62,7 @@ class Control:
             state = self.state.update(self.keys, self.clicks)
         if state == "exit":
             self.running = False
+            save_settings()
         elif state == "back":
             self.state = self.previous[-1]
             if callable(self.state):
