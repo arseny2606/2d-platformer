@@ -2,7 +2,7 @@ import json
 
 import pygame as pg
 from .. import setup
-from ..components import button, checkbox, inputbox
+from ..components import button, checkbox, inputbox, sliderbox
 from .. import utils
 from .. import constants
 from ..settings import settings
@@ -56,18 +56,22 @@ class Options:
     def __init__(self):
         self.states = {"Show FPS": "show_fps",
                        "NickName": "nickname",
-                       "Save": "save"}
+                       "Save": "save",
+                       "Volume": "volume"}
         self.screen = setup.screen
         self.buttons = pg.sprite.Group()
         self.checkboxes = pg.sprite.Group()
         self.inputboxes = pg.sprite.Group()
+        self.sliderboxes = pg.sprite.Group()
         self.bg = utils.load_image("bg.jpg")
         self.bg = pg.transform.scale(self.bg, (constants.width, constants.height))
         rect = self.screen.get_rect()
-        rect.y -= 30
+        rect.y -= 60
         checkbox.CheckBox(self.checkboxes, "Show FPS", rect, settings["show_fps"])
         rect.y += 60
         inputbox.InputBox(self.inputboxes, "NickName", rect)
+        rect.y += 60
+        sliderbox.SliderBox(self.sliderboxes, "Volume", rect)
         rect.y += 180
         button.Button(self.buttons, "Save", rect)
 
@@ -83,6 +87,10 @@ class Options:
             nickname = i.update(clicks, keys, key_events)
             if nickname:
                 settings[self.states[nickname[0]]] = nickname[1]
+        for i in self.sliderboxes:
+            volume = i.update(clicks)
+            if volume:
+                settings[self.states[volume[0]]] = volume[1]
         self.buttons.draw(self.screen)
         for i in self.buttons:
             state = i.update(clicks)
