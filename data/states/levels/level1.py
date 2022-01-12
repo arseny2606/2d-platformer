@@ -24,8 +24,7 @@ def generate_level(game, level, sprite_group, walls_group, coins_group, finish_g
             elif level[y][x] == '%':
                 Coin([sprite_group, coins_group], utils.load_image("coin.png"), 9, 1, x, y)
             elif level[y][x] == '@':
-                new_player = Player(game, x, y, [sprite_group], walls_group, coins_group,
-                                    finish_group)
+                new_player = Player(game, x, y, [sprite_group], walls_group, coins_group, finish_group)
             elif level[y][x] == 'F':
                 Door(x, y, [sprite_group, finish_group])
     # вернем игрока, а также размер поля в клетках
@@ -92,7 +91,6 @@ class Level1:
             self.level = generate_level(self, self.map, self.all_sprites, self.walls_group,
                                         self.coins_group, self.finish_group)
             self.camera = Camera()
-        self.level[0].update()
         if keys[pg.K_ESCAPE]:
             return "back"
 

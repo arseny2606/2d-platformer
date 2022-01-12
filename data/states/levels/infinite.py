@@ -73,7 +73,6 @@ class InfiniteLevel:
             i.move()
         self.coins_text = self.font.render(f"Coins {self.level[0].coins}", True, pg.Color("gold"))
         self.screen.blit(self.coins_text, (1150, 0))
-        self.level[0].update()
         if self.walls_group.sprites()[0].rect.x <= -1100:
             for i in range(2):
                 for j in self.walls_segment[0]:
