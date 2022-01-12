@@ -80,20 +80,14 @@ class InfiniteLevel:
                     self.walls_group.remove(j)
                     self.all_sprites.remove(j)
                 del self.walls_segment[0]
-                try:
-                    for j in self.coins_segment[0]:
-                        self.coins_group.remove(j)
-                        self.all_sprites.remove(j)
-                    del self.coins_segment[0]
-                except IndexError:
-                    pass
-                try:
-                    for j in self.danger_segment[0]:
-                        self.finish_group.remove(j)
-                        self.all_sprites.remove(j)
-                    del self.danger_segment[0]
-                except IndexError:
-                    pass
+                for j in self.coins_segment[0]:
+                    self.coins_group.remove(j)
+                    self.all_sprites.remove(j)
+                del self.coins_segment[0]
+                for j in self.danger_segment[0]:
+                    self.finish_group.remove(j)
+                    self.all_sprites.remove(j)
+                del self.danger_segment[0]
             last_x = self.walls_group.sprites()[-1].rect.x
             self.level[0].walls_group = self.walls_group
             self.level[0].coins_group = self.coins_group
