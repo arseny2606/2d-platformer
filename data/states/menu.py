@@ -13,6 +13,7 @@ class Menu:
         self.states = {"Story mode": "story",
                        "Infinite mode": "infinite",
                        "Leaderboard": "leaderboard",
+                       "Infinite leaderboard": "infinite_leaderboard",
                        "Options": "options",
                        "Exit": "exit"}
         self.screen = setup.screen
@@ -99,9 +100,14 @@ class Leaderboard:
         self.bg = utils.load_image("bg.jpg")
         self.bg = pg.transform.scale(self.bg, (constants.width, constants.height))
         self.font = pg.font.SysFont("Arial", 30)
+        self.buttons = pg.sprite.Group()
+        rect = self.screen.get_rect()
+        rect.y += constants.height // 3
+        button.Button(self.buttons, "Infinite game", rect)
 
     def update(self, keys, clicks):
         self.screen.blit(self.bg, (0, 0))
+        self.buttons.draw(self.screen)
         with open("resources/data/leaderboard.json") as f:
             data = json.load(f)
             leaderboard = data["users"]
@@ -151,6 +157,59 @@ class Leaderboard:
                                         pg.Color("red"))
                 self.screen.blit(text, (text.get_rect(center=(constants.width // 4 * 3, y))))
                 y += constants.height // 20
+        for i in self.buttons:
+            state = i.update(clicks)
+            if state:
+                return "infinite_leaderboard"
+        if keys[pg.K_ESCAPE]:
+            return "back"
+
+
+class InfiniteLeaderboard:
+    def __init__(self):
+        self.screen = setup.screen
+        self.bg = utils.load_image("bg.jpg")
+        self.bg = pg.transform.scale(self.bg, (constants.width, constants.height))
+        self.font = pg.font.SysFont("Arial", 30)
+        self.buttons = pg.sprite.Group()
+        rect = self.screen.get_rect()
+        rect.y += constants.height // 3
+        b1 = button.Button(self.buttons, "Back", rect)
+        b1.rect.y += b1.rect.height
+
+    def update(self, keys, clicks):
+        self.screen.blit(self.bg, (0, 0))
+        self.buttons.draw(self.screen)
+        with open("resources/data/leaderboard.json") as f:
+            data = json.load(f)
+            leaderboard = data["users"]
+            leaderboard = list(filter(lambda x: x["level"] == -1, leaderboard))
+            leaderboard.sort(key=lambda x: x["score"], reverse=True)
+            leaderboard = leaderboard[:10]
+            y = constants.height // 4
+            text = self.font.render("Infinite game:", True,
+                                    pg.Color("red"))
+            self.screen.blit(text, (text.get_rect(center=(constants.width // 2, y))))
+            y += constants.height // 20
+            if len(leaderboard) == 0:
+                text = self.font.render("There is no results", True,
+                                        pg.Color("red"))
+                self.screen.blit(text, (text.get_rect(center=(constants.width // 2, y))))
+                y += constants.height // 20
+                text = self.font.render("Be the first to set a record!", True,
+                                        pg.Color("red"))
+                self.screen.blit(text, (text.get_rect(center=(constants.width // 2, y))))
+            for i in leaderboard:
+                if len(i['name']) > 30:
+                    i['name'] = i['name'][:30] + '...'
+                text = self.font.render(f"{i['name']} {i['time']} - {i['score']}", True,
+                                        pg.Color("red"))
+                self.screen.blit(text, (text.get_rect(center=(constants.width // 2, y))))
+                y += constants.height // 20
+        for i in self.buttons:
+            state = i.update(clicks)
+            if state:
+                return "back"
         if keys[pg.K_ESCAPE]:
             return "back"
 

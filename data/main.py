@@ -96,6 +96,7 @@ def main():
     states = {"menu": menu.Menu(),
               "options": menu.Options(),
               "leaderboard": menu.Leaderboard(),
+              "infinite_leaderboard": menu.InfiniteLeaderboard(),
               "story": menu.Levels(),
               "level1": level1.Level1,
               "level2": level2.Level2,
