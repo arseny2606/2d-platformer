@@ -57,55 +57,72 @@ class InfiniteLevel:
 
     def update(self, keys, clicks):
         if self.is_finished:
-            return "back"
-        self.screen.blit(self.bg, (0, 0))
-        if self.loading:
-            pg.draw.rect(self.screen, "red", [100, constants.height // 2 - 5, self.loader, 10])
-            self.loader += 10
-            if self.loader >= 1080:
-                self.loading = False
-            return
-        self.level[0].move(keys)
-        self.all_sprites.draw(self.screen)
-        self.all_sprites.update()
-        for i in self.walls_group:
-            i.move()
-        for i in self.finish_group:
-            i.move()
-        for i in self.coins_group:
-            i.move()
-        self.coins_text = self.font.render(f"Coins {self.level[0].coins}", True, pg.Color("gold"))
-        self.screen.blit(self.coins_text, (1150, 0))
-        if self.walls_group.sprites()[0].rect.x <= -1100:
-            for i in range(2):
-                for j in self.walls_segment[0]:
-                    self.walls_group.remove(j)
-                    self.all_sprites.remove(j)
-                del self.walls_segment[0]
-                for j in self.coins_segment[0]:
-                    self.coins_group.remove(j)
-                    self.all_sprites.remove(j)
-                del self.coins_segment[0]
-                for j in self.danger_segment[0]:
-                    self.finish_group.remove(j)
-                    self.all_sprites.remove(j)
-                del self.danger_segment[0]
-            last_x = self.walls_group.sprites()[-1].rect.x
-            self.level[0].walls_group = self.walls_group
-            self.level[0].coins_group = self.coins_group
-            self.level[0].finish_group = self.finish_group
-            old_x = 0
-            for i in range(2):
-                self.map = load_level(f"infinite_seg{random.randint(1, 6)}.txt")
-                self.level = self.generate_level_next(self, self.map, self.all_sprites, self.walls_group,
-                                                      self.coins_group, self.finish_group, self.level[0], old_x, last_x)
-                old_x = self.level[1]
-
-        if keys[pg.K_ESCAPE]:
             pg.mixer.music.stop()
             pg.mixer.music.load("resources/sounds/menu.mp3")
             pg.mixer.music.play(-1)
+            self.screen.blit(utils.load_image("bg.jpg"), (0, 0))
+            font = pg.font.SysFont("Arial", 60)
+            text = font.render("You lost!", True,
+                               pg.Color("red"))
+            self.screen.blit(text,
+                             (text.get_rect(center=(constants.width // 2, constants.height // 3))))
+            text = font.render(f"Your score is {self.level[0].coins} coins", True,
+                               pg.Color("gold"))
+            self.screen.blit(text,
+                             (text.get_rect(
+                                 center=(constants.width // 2, constants.height // 3 * 2))))
+            pg.display.flip()
+            pg.time.wait(4000)
             return "back"
+        else:
+            self.screen.blit(self.bg, (0, 0))
+            if self.loading:
+                pg.draw.rect(self.screen, "red", [100, constants.height // 2 - 5, self.loader, 10])
+                self.loader += 10
+                if self.loader >= 1080:
+                    self.loading = False
+                return
+            self.level[0].move(keys)
+            self.all_sprites.draw(self.screen)
+            self.all_sprites.update()
+            for i in self.walls_group:
+                i.move()
+            for i in self.finish_group:
+                i.move()
+            for i in self.coins_group:
+                i.move()
+            self.coins_text = self.font.render(f"Coins {self.level[0].coins}", True, pg.Color("gold"))
+            self.screen.blit(self.coins_text, (1150, 0))
+            if self.walls_group.sprites()[0].rect.x <= -1100:
+                for i in range(2):
+                    for j in self.walls_segment[0]:
+                        self.walls_group.remove(j)
+                        self.all_sprites.remove(j)
+                    del self.walls_segment[0]
+                    for j in self.coins_segment[0]:
+                        self.coins_group.remove(j)
+                        self.all_sprites.remove(j)
+                    del self.coins_segment[0]
+                    for j in self.danger_segment[0]:
+                        self.finish_group.remove(j)
+                        self.all_sprites.remove(j)
+                    del self.danger_segment[0]
+                last_x = self.walls_group.sprites()[-1].rect.x
+                self.level[0].walls_group = self.walls_group
+                self.level[0].coins_group = self.coins_group
+                self.level[0].finish_group = self.finish_group
+                old_x = 0
+                for i in range(2):
+                    self.map = load_level(f"infinite_seg{random.randint(1, 6)}.txt")
+                    self.level = self.generate_level_next(self, self.map, self.all_sprites, self.walls_group,
+                                                          self.coins_group, self.finish_group, self.level[0], old_x, last_x)
+                    old_x = self.level[1]
+
+            if keys[pg.K_ESCAPE]:
+                pg.mixer.music.stop()
+                pg.mixer.music.load("resources/sounds/menu.mp3")
+                pg.mixer.music.play(-1)
+                return "back"
 
     def finish(self):
         self.is_finished = True
@@ -117,9 +134,6 @@ class InfiniteLevel:
                                      "level": -1})
         with open("resources/data/leaderboard.json", "w") as f:
             json.dump(leaderboard, f, indent=4)
-        pg.mixer.music.stop()
-        pg.mixer.music.load("resources/sounds/menu.mp3")
-        pg.mixer.music.play(-1)
 
     def generate_level(self, game, level, sprite_group, walls_group, coins_group, finish_group, player, old_x):
         x, y = 0, 0

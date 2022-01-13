@@ -69,36 +69,53 @@ class Level1:
 
     def update(self, keys, clicks):
         if self.is_finished:
-            return "back"
-        self.screen.blit(self.bg, (0, 0))
-        if self.loading:
-            pg.draw.rect(self.screen, "red", [100, constants.height // 2 - 5, self.loader, 10])
-            self.loader += 10
-            if self.loader >= 1080:
-                self.loading = False
-            return
-        self.level[0].move(keys)
-        self.all_sprites.draw(self.screen)
-        self.all_sprites.update()
-        self.coins_text = self.font.render(f"Coins {self.level[0].coins}", True, pg.Color("gold"))
-        self.screen.blit(self.coins_text, (1150, 0))
-        self.camera.update(self.level[0])
-        for sprite in self.all_sprites:
-            self.camera.apply(sprite)
-        if keys[pg.K_r]:
-            self.all_sprites = pg.sprite.Group()
-            self.walls_group = pg.sprite.Group()
-            self.coins_group = pg.sprite.Group()
-            self.finish_group = pg.sprite.Group()
-            self.map = load_level("level1.txt")
-            self.level = generate_level(self, self.map, self.all_sprites, self.walls_group,
-                                        self.coins_group, self.finish_group)
-            self.camera = Camera()
-        if keys[pg.K_ESCAPE]:
             pg.mixer.music.stop()
             pg.mixer.music.load("resources/sounds/menu.mp3")
             pg.mixer.music.play(-1)
+            self.screen.blit(utils.load_image("bg.jpg"), (0, 0))
+            font = pg.font.SysFont("Arial", 60)
+            text = font.render("You won!", True,
+                               pg.Color("red"))
+            self.screen.blit(text,
+                             (text.get_rect(center=(constants.width // 2, constants.height // 3))))
+            text = font.render(f"Your score is {self.level[0].coins} coins", True,
+                               pg.Color("gold"))
+            self.screen.blit(text,
+                             (text.get_rect(
+                                 center=(constants.width // 2, constants.height // 3 * 2))))
+            pg.display.flip()
+            pg.time.wait(4000)
             return "back"
+        else:
+            self.screen.blit(self.bg, (0, 0))
+            if self.loading:
+                pg.draw.rect(self.screen, "red", [100, constants.height // 2 - 5, self.loader, 10])
+                self.loader += 10
+                if self.loader >= 1080:
+                    self.loading = False
+                return
+            self.level[0].move(keys)
+            self.all_sprites.draw(self.screen)
+            self.all_sprites.update()
+            self.coins_text = self.font.render(f"Coins {self.level[0].coins}", True, pg.Color("gold"))
+            self.screen.blit(self.coins_text, (1150, 0))
+            self.camera.update(self.level[0])
+            for sprite in self.all_sprites:
+                self.camera.apply(sprite)
+            if keys[pg.K_r]:
+                self.all_sprites = pg.sprite.Group()
+                self.walls_group = pg.sprite.Group()
+                self.coins_group = pg.sprite.Group()
+                self.finish_group = pg.sprite.Group()
+                self.map = load_level("level1.txt")
+                self.level = generate_level(self, self.map, self.all_sprites, self.walls_group,
+                                            self.coins_group, self.finish_group)
+                self.camera = Camera()
+            if keys[pg.K_ESCAPE]:
+                pg.mixer.music.stop()
+                pg.mixer.music.load("resources/sounds/menu.mp3")
+                pg.mixer.music.play(-1)
+                return "back"
 
     def finish(self):
         self.is_finished = True
@@ -110,6 +127,3 @@ class Level1:
                                      "level": 1})
         with open("resources/data/leaderboard.json", "w") as f:
             json.dump(leaderboard, f, indent=4)
-        pg.mixer.music.stop()
-        pg.mixer.music.load("resources/sounds/menu.mp3")
-        pg.mixer.music.play(-1)
