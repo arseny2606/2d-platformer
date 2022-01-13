@@ -63,8 +63,6 @@ class Player(pg.sprite.Sprite):
     def move(self, keys):
         self.time = pg.time.get_ticks()
         self.dy = 0
-        if keys[pg.K_SPACE] and self.old_time + 60 < self.time:
-            settings["debug"] = not settings["debug"]
         if keys[pg.K_UP] and (not self.jumped and not self.in_air or settings["debug"]):
             pg.mixer.Channel(3).play(self.jump_sound)
             self.vel_y = -10
@@ -142,8 +140,6 @@ class InfinitePlayer(Player):
     def move(self, keys):
         self.time = pg.time.get_ticks()
         self.dy = 0
-        if keys[pg.K_SPACE] and self.old_time + 60 < self.time:
-            settings["debug"] = not settings["debug"]
         if keys[pg.K_UP] and (not self.jumped and not self.in_air or settings["debug"]):
             pg.mixer.Channel(3).play(self.jump_sound)
             self.vel_y = -10
