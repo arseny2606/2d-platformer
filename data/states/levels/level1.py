@@ -91,14 +91,14 @@ class Level1:
             if self.loading:
                 pg.draw.rect(self.screen, "red", [100, constants.height // 2 - 5, self.loader, 10])
                 self.loader += 10
-                if self.loader >= 1080:
+                if self.loader >= constants.width - 100:
                     self.loading = False
                 return
             self.level[0].move(keys)
             self.all_sprites.draw(self.screen)
             self.all_sprites.update()
             self.coins_text = self.font.render(f"Coins {self.level[0].coins}", True, pg.Color("gold"))
-            self.screen.blit(self.coins_text, (1150, 0))
+            self.screen.blit(self.coins_text, (constants.width - 100, 0))
             self.camera.update(self.level[0])
             for sprite in self.all_sprites:
                 self.camera.apply(sprite)

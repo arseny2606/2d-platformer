@@ -43,7 +43,7 @@ class Menu:
         if self.loading:
             pg.draw.rect(self.screen, "red", [100, constants.height // 2 - 5, self.loader, 10])
             self.loader += 10
-            if self.loader >= 1080:
+            if self.loader >= constants.width - 100:
                 self.loading = False
             return
         self.buttons.draw(self.screen)

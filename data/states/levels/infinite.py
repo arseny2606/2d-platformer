@@ -79,7 +79,7 @@ class InfiniteLevel:
             if self.loading:
                 pg.draw.rect(self.screen, "red", [100, constants.height // 2 - 5, self.loader, 10])
                 self.loader += 10
-                if self.loader >= 1080:
+                if self.loader >= constants.width - 100:
                     self.loading = False
                 return
             self.level[0].move(keys)
@@ -92,7 +92,7 @@ class InfiniteLevel:
             for i in self.coins_group:
                 i.move()
             self.coins_text = self.font.render(f"Coins {self.level[0].coins}", True, pg.Color("gold"))
-            self.screen.blit(self.coins_text, (1150, 0))
+            self.screen.blit(self.coins_text, (constants.width - 100, 0))
             if self.walls_group.sprites()[0].rect.x <= -1100:
                 for i in range(2):
                     for j in self.walls_segment[0]:
