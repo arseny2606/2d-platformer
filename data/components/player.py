@@ -4,7 +4,6 @@ from .. import constants
 from ..settings import settings
 import time
 
-
 player_image = utils.load_image('player.png')
 player_image = pg.transform.scale(player_image, (1792, 64))
 
@@ -42,6 +41,9 @@ class Player(pg.sprite.Sprite):
         self.old_time = 0.0
         self.time = pg.time.get_ticks()
         self.coins = 0
+        self.coin_sound = pg.mixer.Sound("resources/sounds/coin.mp3")
+        self.jump_sound = pg.mixer.Sound("resources/sounds/jump.mp3")
+        self.exit_sound = pg.mixer.Sound("resources/sounds/exit.mp3")
 
     def cut_sheet(self, sheet, start, end, backward):
         self.rect = pg.Rect(0, 0, sheet.get_width() // self.columns,
@@ -64,6 +66,7 @@ class Player(pg.sprite.Sprite):
         if keys[pg.K_SPACE] and self.old_time + 60 < self.time:
             settings["debug"] = not settings["debug"]
         if keys[pg.K_UP] and (not self.jumped and not self.in_air or settings["debug"]):
+            pg.mixer.Channel(3).play(self.jump_sound)
             self.vel_y = -10
             self.jumped = True
         if not keys[pg.K_UP]:
@@ -85,9 +88,11 @@ class Player(pg.sprite.Sprite):
         self.in_air = True
         for tile in self.walls_group:
             tile = tile.rect
-            if tile.colliderect(self.rect.x + self.dx, self.rect.y, self.width, self.height) and not settings["debug"]:
+            if tile.colliderect(self.rect.x + self.dx, self.rect.y, self.width, self.height) and not \
+                    settings["debug"]:
                 self.dx = 0
-            if tile.colliderect(self.rect.x, self.rect.y + self.dy, self.width, self.height) and not settings["debug"]:
+            if tile.colliderect(self.rect.x, self.rect.y + self.dy, self.width, self.height) and not \
+                    settings["debug"]:
                 if self.vel_y < 0:
                     self.dy = tile.bottom - self.rect.top
                     self.vel_y = 0
@@ -98,13 +103,17 @@ class Player(pg.sprite.Sprite):
 
         for tile in self.coins_group:
             tile_rect = tile.rect
-            if tile_rect.colliderect(self.rect.x + self.dx, self.rect.y, self.width, self.height) and not settings["debug"]:
+            if tile_rect.colliderect(self.rect.x + self.dx, self.rect.y, self.width,
+                                     self.height) and not settings["debug"]:
                 tile.kill()
                 self.coins += 1
+                pg.mixer.Channel(1).play(self.coin_sound)
 
         for tile in self.finish_group:
             tile_rect = tile.rect
-            if tile_rect.colliderect(self.rect.x + self.dx, self.rect.y, self.width, self.height) and not settings["debug"]:
+            if tile_rect.colliderect(self.rect.x + self.dx, self.rect.y, self.width,
+                                     self.height) and not settings["debug"]:
+                pg.mixer.Channel(2).play(self.exit_sound)
                 self.game.finish()
 
         self.rect.x += self.dx
@@ -128,6 +137,7 @@ class Player(pg.sprite.Sprite):
 class InfinitePlayer(Player):
     def __init__(self, game, pos_x, pos_y, sprite_groups, walls_group, coins_group, finish_group):
         super().__init__(game, pos_x, pos_y, sprite_groups, walls_group, coins_group, finish_group)
+        self.death_sound = pg.mixer.Sound("resources/sounds/oof.mp3")
 
     def move(self, keys):
         self.time = pg.time.get_ticks()
@@ -135,6 +145,7 @@ class InfinitePlayer(Player):
         if keys[pg.K_SPACE] and self.old_time + 60 < self.time:
             settings["debug"] = not settings["debug"]
         if keys[pg.K_UP] and (not self.jumped and not self.in_air or settings["debug"]):
+            pg.mixer.Channel(3).play(self.jump_sound)
             self.vel_y = -10
             self.jumped = True
         if not keys[pg.K_UP]:
@@ -146,9 +157,11 @@ class InfinitePlayer(Player):
         self.in_air = True
         for tile in self.walls_group:
             tile = tile.rect
-            if tile.colliderect(self.rect.x + self.dx, self.rect.y, self.width, self.height) and not settings["debug"]:
+            if tile.colliderect(self.rect.x + self.dx, self.rect.y, self.width, self.height) and not \
+                    settings["debug"]:
                 self.dx = 0
-            if tile.colliderect(self.rect.x, self.rect.y + self.dy, self.width, self.height) and not settings["debug"]:
+            if tile.colliderect(self.rect.x, self.rect.y + self.dy, self.width, self.height) and not \
+                    settings["debug"]:
                 if self.vel_y < 0:
                     self.dy = tile.bottom - self.rect.top
                     self.vel_y = 0
@@ -159,15 +172,17 @@ class InfinitePlayer(Player):
 
         for tile in self.coins_group:
             tile_rect = tile.rect
-            if tile_rect.colliderect(self.rect.x + self.dx, self.rect.y, self.width, self.height) and not settings[
-                "debug"]:
+            if tile_rect.colliderect(self.rect.x + self.dx, self.rect.y, self.width,
+                                     self.height) and not settings["debug"]:
                 tile.kill()
                 self.coins += 1
+                pg.mixer.Channel(1).play(self.coin_sound)
 
         for tile in self.finish_group:
             tile_rect = tile.rect
-            if tile_rect.colliderect(self.rect.x + self.dx, self.rect.y, self.width, self.height) and not settings[
-                "debug"]:
+            if tile_rect.colliderect(self.rect.x + self.dx, self.rect.y, self.width,
+                                     self.height) and not settings["debug"]:
+                pg.mixer.Channel(2).play(self.death_sound)
                 self.game.finish()
 
         self.rect.y += self.dy

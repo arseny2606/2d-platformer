@@ -15,6 +15,7 @@ def load_settings():
         new_settings = json.load(f)
         for i in new_settings.items():
             settings[i[0]] = i[1]
+        pg.mixer.music.set_volume(settings["volume"] / 100)
 
 
 def save_settings():

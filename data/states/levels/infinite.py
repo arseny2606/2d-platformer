@@ -51,6 +51,9 @@ class InfiniteLevel:
         self.x = 0
         self.y = 0
         self.is_finished = False
+        pg.mixer.music.stop()
+        pg.mixer.music.load("resources/sounds/game.mp3")
+        pg.mixer.music.play(-1)
 
     def update(self, keys, clicks):
         if self.is_finished:
@@ -99,6 +102,9 @@ class InfiniteLevel:
                 old_x = self.level[1]
 
         if keys[pg.K_ESCAPE]:
+            pg.mixer.music.stop()
+            pg.mixer.music.load("resources/sounds/menu.mp3")
+            pg.mixer.music.play(-1)
             return "back"
 
     def finish(self):
@@ -111,6 +117,9 @@ class InfiniteLevel:
                                      "level": -1})
         with open("resources/data/leaderboard.json", "w") as f:
             json.dump(leaderboard, f, indent=4)
+        pg.mixer.music.stop()
+        pg.mixer.music.load("resources/sounds/menu.mp3")
+        pg.mixer.music.play(-1)
 
     def generate_level(self, game, level, sprite_group, walls_group, coins_group, finish_group, player, old_x):
         x, y = 0, 0

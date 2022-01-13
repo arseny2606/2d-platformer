@@ -20,6 +20,8 @@ class Menu:
         self.buttons = pg.sprite.Group()
         self.bg = utils.load_image("bg.jpg")
         self.bg = pg.transform.scale(self.bg, (constants.width, constants.height))
+        pg.mixer.music.load("resources/sounds/menu.mp3")
+        pg.mixer.music.play(-1)
         rect = self.screen.get_rect()
         rect.y -= 90
         button.Button(self.buttons, "Story mode", rect)
@@ -91,6 +93,7 @@ class Options:
             volume = i.update(clicks)
             if volume:
                 settings[self.states[volume[0]]] = volume[1]
+                pg.mixer.music.set_volume(settings["volume"] / 100)
         self.buttons.draw(self.screen)
         for i in self.buttons:
             state = i.update(clicks)
