@@ -1,6 +1,6 @@
 {
-    "show_fps": true,
+    "show_fps": false,
     "debug": false,
-    "nickname": "Player2",
+    "nickname": "Player",
     "volume": 100
 }
